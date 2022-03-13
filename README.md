@@ -1,1 +1,1 @@
-# solution-pack-fortinet-fortisiem
+# solution-pack-fortisiem-essentials
