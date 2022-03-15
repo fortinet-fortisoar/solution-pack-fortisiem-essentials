@@ -1,0 +1,35 @@
+{
+    "name": "fortiSIEMEssentials",
+    "version": "1.0.0",
+    "type": "solutionpack",
+    "local": true,
+    "label": "FortiSIEM Essentials",
+    "dependencies": [
+        {
+            "name": "sOARFramework",
+            "type": "solutionpack",
+            "label": "SOAR Framework",
+            "version": "1.0.0",
+            "minVersion": null
+        }
+    ],
+    "prerequisite": null,
+    "certified": "true",
+    "publisher": "Fortinet",
+    "description": "This solution pack contains the essential contents to make the FortiSIEM integration in FortiSOAR more seamless and comprehensive. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you will also start seeing the installed playbooks in FortiSIEM's native UI (v6.4.0+).",
+    "help": "https:\/\/github.com\/fortinet-fortisoar\/solution-pack-fortinet-fortisiem\/blob\/develop\/README.md",
+    "category": [],
+    "supportInfo": "support@fortinet.com",
+    "iconLarge": null,
+    "fsrMinCompatibility": "7.2.0",
+    "date": "2022-03-13T16:55:52+00:00",
+    "exported_from": "tenant.fortisoar.com",
+    "exported_by": "CS Admin",
+    "contents": {
+        "playbooks": [
+            {
+                "name": "02 - Enrich (FortiSIEM)"
+            }
+        ]
+    }
+}

@@ -1,0 +1,404 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-reference-get-hash-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "Get Hash Reputation Nested Playbook",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "hash_input"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/733a59d7-6093-41a3-bf06-79881c56ec54",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract hash",
+            "description": null,
+            "arguments": {
+                "hash": "{{vars.input.params['hash_input']}}"
+            },
+            "status": null,
+            "top": "40",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "66205f2e-62a0-4df5-ab54-bdbd8997db1d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "733a59d7-6093-41a3-bf06-79881c56ec54"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If hash defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/1a59d84b-7c91-4aab-8fad-5aedd6b36d82",
+                        "condition": "{{ vars.hash is not defined }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/1a59d84b-7c91-4aab-8fad-5aedd6b36d82",
+                        "condition": "{{ vars.hash == \"\" or vars.hash is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Hash Lookup",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/b28e590c-72c1-4765-bee5-e4efa9006aae",
+                        "step_name": "Get Virus Total Hash Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "180",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "867c204b-75a3-46e7-9cba-6e68c814cbc3"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "General Error",
+            "description": null,
+            "arguments": {
+                "Error": "hash doesnt exist"
+            },
+            "status": null,
+            "top": "180",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "1a59d84b-7c91-4aab-8fad-5aedd6b36d82"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Virus Total Hash Reputation",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "12ebc61f-c59d-4943-95b6-72778113c6f5",
+                "params": {
+                    "file_hash": "{{vars.hash}}"
+                },
+                "version": "2.0.0",
+                "connector": "virustotal",
+                "operation": "file_reputation",
+                "ignore_errors": true,
+                "operationTitle": "Get File Reputation",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "340",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "b28e590c-72c1-4765-bee5-e4efa9006aae"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if vars.vtReputation %}{{vars.vtReputation}}\n{% else %}\nThere was an error in retrieving reputation data\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "520",
+            "left": "1740",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "9dcd035e-b8ec-4093-a08c-0c462ef362e8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Final output",
+            "description": null,
+            "arguments": {
+                "summary": "{{vars.steps.Create_Summary.data['formatted_string']}}",
+                "virusTotalResult": "{{vars.steps.Get_Virus_Total_Hash_Reputation.data}}"
+            },
+            "status": null,
+            "top": "520",
+            "left": "2160",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "d3d793d2-10b5-4052-8b93-1739f843a070"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Result Vars",
+            "description": null,
+            "arguments": {
+                "vtHarmless": "{{vars.steps.Get_Virus_Total_Hash_Reputation.data.attributes['last_analysis_stats'].harmless}}",
+                "vtMalicious": "{{vars.steps.Get_Virus_Total_Hash_Reputation.data.attributes['last_analysis_stats'].malicious}}"
+            },
+            "status": null,
+            "top": "500",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "08ef7691-99e6-4d23-b172-c40722797cb8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compare Reputation",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "No Rep",
+                        "step_iri": "\/api\/3\/workflow_steps\/c626352e-c2c8-4c86-8f6f-a60479df211c",
+                        "condition": "{{ vars.vtHarmless == 0 and vars.vtMalicious == 0 }}",
+                        "step_name": "Set No Rep"
+                    },
+                    {
+                        "option": "Harmless",
+                        "step_iri": "\/api\/3\/workflow_steps\/b10f4cde-c45a-4caa-b106-53a56005405c",
+                        "condition": "{{ vars.vtHarmless > vars.vtMalicious }}",
+                        "step_name": "Set Harmless Rep"
+                    },
+                    {
+                        "option": "Malicious",
+                        "step_iri": "\/api\/3\/workflow_steps\/fbcaf63e-d71c-4eb3-99c9-6af02a34c4ac",
+                        "condition": "{{ vars.vtHarmless < vars.vtMalicious }}",
+                        "step_name": "Set Malicious Rep"
+                    },
+                    {
+                        "option": "Neutral",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/626c7661-249b-4523-a511-6c0ecf0bef3b",
+                        "step_name": "Set Neutral Rep"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "500",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "fb87fee5-5638-49bc-a792-c7d30a20bf40"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Neutral Rep",
+            "description": null,
+            "arguments": {
+                "vtReputation": "reputation is neutral"
+            },
+            "status": null,
+            "top": "320",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "626c7661-249b-4523-a511-6c0ecf0bef3b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Harmless Rep",
+            "description": null,
+            "arguments": {
+                "vtReputation": "reputation is harmless"
+            },
+            "status": null,
+            "top": "480",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "b10f4cde-c45a-4caa-b106-53a56005405c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Malicious Rep",
+            "description": null,
+            "arguments": {
+                "vtReputation": "reputation is malicious"
+            },
+            "status": null,
+            "top": "600",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "fbcaf63e-d71c-4eb3-99c9-6af02a34c4ac"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set No Rep",
+            "description": null,
+            "arguments": {
+                "vtReputation": "has no reputation"
+            },
+            "status": null,
+            "top": "720",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "c626352e-c2c8-4c86-8f6f-a60479df211c"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Extract hash",
+            "targetStep": "\/api\/3\/workflow_steps\/66205f2e-62a0-4df5-ab54-bdbd8997db1d",
+            "sourceStep": "\/api\/3\/workflow_steps\/733a59d7-6093-41a3-bf06-79881c56ec54",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "08c286ff-e94a-4f25-bc32-0e2bc935e36f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash -> If hash defined",
+            "targetStep": "\/api\/3\/workflow_steps\/867c204b-75a3-46e7-9cba-6e68c814cbc3",
+            "sourceStep": "\/api\/3\/workflow_steps\/66205f2e-62a0-4df5-ab54-bdbd8997db1d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2e7386a5-2724-4747-9ee3-dafab94ab4a8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If hash defined -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/1a59d84b-7c91-4aab-8fad-5aedd6b36d82",
+            "sourceStep": "\/api\/3\/workflow_steps\/867c204b-75a3-46e7-9cba-6e68c814cbc3",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "182a923d-549c-4cb4-a443-9a7212d08d56"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If hash defined -> Get Virus Total Hash Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/b28e590c-72c1-4765-bee5-e4efa9006aae",
+            "sourceStep": "\/api\/3\/workflow_steps\/867c204b-75a3-46e7-9cba-6e68c814cbc3",
+            "label": "Get Hash Lookup",
+            "isExecuted": false,
+            "uuid": "78e90cd2-ea1e-4f20-91ae-2a094bbc568c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Summary -> Final output",
+            "targetStep": "\/api\/3\/workflow_steps\/d3d793d2-10b5-4052-8b93-1739f843a070",
+            "sourceStep": "\/api\/3\/workflow_steps\/9dcd035e-b8ec-4093-a08c-0c462ef362e8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "af3f9b58-f5da-4be5-b4b2-f4a67c8af544"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Virus Total Hash Reputation -> Set Result Vars",
+            "targetStep": "\/api\/3\/workflow_steps\/08ef7691-99e6-4d23-b172-c40722797cb8",
+            "sourceStep": "\/api\/3\/workflow_steps\/b28e590c-72c1-4765-bee5-e4efa9006aae",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "844c7925-bfe4-476e-a4b3-50085dd075f9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Result Vars -> Compare Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/fb87fee5-5638-49bc-a792-c7d30a20bf40",
+            "sourceStep": "\/api\/3\/workflow_steps\/08ef7691-99e6-4d23-b172-c40722797cb8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2009d427-5de3-46be-9241-4424e1d656f6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compare Reputation -> Set Neutral Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/626c7661-249b-4523-a511-6c0ecf0bef3b",
+            "sourceStep": "\/api\/3\/workflow_steps\/fb87fee5-5638-49bc-a792-c7d30a20bf40",
+            "label": "Neutral",
+            "isExecuted": false,
+            "uuid": "08f14808-567c-458e-963f-550c2ab4c32a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compare Reputation -> Set Harmless Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/b10f4cde-c45a-4caa-b106-53a56005405c",
+            "sourceStep": "\/api\/3\/workflow_steps\/fb87fee5-5638-49bc-a792-c7d30a20bf40",
+            "label": "Harmless",
+            "isExecuted": false,
+            "uuid": "bd9c85c8-f174-4cba-9348-3910795ef5bf"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compare Reputation -> Set Malicious Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/fbcaf63e-d71c-4eb3-99c9-6af02a34c4ac",
+            "sourceStep": "\/api\/3\/workflow_steps\/fb87fee5-5638-49bc-a792-c7d30a20bf40",
+            "label": "Malicious",
+            "isExecuted": false,
+            "uuid": "7ecd8aaa-0f01-4cdd-b944-6c739e626fa0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compare Reputation -> Set No Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/c626352e-c2c8-4c86-8f6f-a60479df211c",
+            "sourceStep": "\/api\/3\/workflow_steps\/fb87fee5-5638-49bc-a792-c7d30a20bf40",
+            "label": "No Rep",
+            "isExecuted": false,
+            "uuid": "e0854172-29b3-48a3-8dcf-c6ffd4bd97c9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Neutral Rep -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/9dcd035e-b8ec-4093-a08c-0c462ef362e8",
+            "sourceStep": "\/api\/3\/workflow_steps\/626c7661-249b-4523-a511-6c0ecf0bef3b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "65834204-2168-4924-9006-8dd29e3e8a9f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Harmless Rep -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/9dcd035e-b8ec-4093-a08c-0c462ef362e8",
+            "sourceStep": "\/api\/3\/workflow_steps\/b10f4cde-c45a-4caa-b106-53a56005405c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "69f8d685-a86f-4495-965d-c2c3c85b4ee2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Malicious Rep -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/9dcd035e-b8ec-4093-a08c-0c462ef362e8",
+            "sourceStep": "\/api\/3\/workflow_steps\/fbcaf63e-d71c-4eb3-99c9-6af02a34c4ac",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "05ff65da-a184-459a-afca-b342c824205d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set No Rep -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/9dcd035e-b8ec-4093-a08c-0c462ef362e8",
+            "sourceStep": "\/api\/3\/workflow_steps\/c626352e-c2c8-4c86-8f6f-a60479df211c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a5ae1070-5d35-416f-b442-224e76fb57cd"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "577714a2-0d8f-480f-b812-49a262377449",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM-Reference"
+    ]
+}

@@ -1,0 +1,547 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-reference-virustotal-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "Get virus total reputation nested playbook",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "ip",
+        "ip_type"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/2be247cd-f497-4778-b658-95c84b834967",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "2be247cd-f497-4778-b658-95c84b834967"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get IP from calling playbook",
+            "description": null,
+            "arguments": {
+                "ip": "{{vars.input.params.ip}}",
+                "ip_type": "{{vars.input.params['ip_type']}}"
+            },
+            "status": null,
+            "top": "140",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ac4f5ef5-e2e2-42fb-ace6-dc1b694e0593"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get ip reputation",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "12ebc61f-c59d-4943-95b6-72778113c6f5",
+                "params": {
+                    "ip": "{{vars.input.params.ip}}"
+                },
+                "version": "2.0.0",
+                "connector": "virustotal",
+                "operation": "query_ip",
+                "operationTitle": "Get IP Reputation",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "c77ab8ff-54cf-4337-b976-5da4b7b48538"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract interesting variables",
+            "description": null,
+            "arguments": {
+                "outputJSON": "{{vars.steps.Get_ip_reputation}}",
+                "vtHarmless": "{{vars.steps.Get_ip_reputation.data.attributes['last_analysis_stats'].harmless}}",
+                "vtMalicious": "{{vars.steps.Get_ip_reputation.data.attributes['last_analysis_stats'].malicious}}",
+                "vtSuspicious": "{{vars.steps.Get_ip_reputation.data.attributes['last_analysis_stats'].suspicious}}",
+                "communityHarmless": "{{vars.steps.Get_ip_reputation.data.attributes['total_votes'].harmless}}",
+                "communityMalicious": "{{vars.steps.Get_ip_reputation.data.attributes['total_votes'].malicious}}"
+            },
+            "status": null,
+            "top": "440",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "162ef8d8-0802-4c05-bba6-b016032947dc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Community Determined Malicious Check",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/7c30b47e-0629-4ac0-8236-1985e51ff13a",
+                        "condition": "{{ vars.communityHarmless == 0 and vars.communityMalicious == 0 }}",
+                        "step_name": "Set No community reputation"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/bdc0a064-9aa2-41fd-8d13-9e3d8e120274",
+                        "condition": "{{ vars.communityHarmless < vars.communityMalicious }}",
+                        "step_name": "Set community malicious"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/12b081a5-aca9-4cf8-9306-86e806b952eb",
+                        "condition": "{{ vars.communityHarmless > vars.communityMalicious }}",
+                        "step_name": "Set community harmless"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/b6f791ff-11e0-4245-8923-c51c992fd8cf",
+                        "condition": "{{ vars.communityHarmless == vars.communityMalicious }}",
+                        "step_name": "Set community neutral reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "760",
+            "left": "460",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "cb0b42e6-8fef-4f85-826e-ca8436b6a9c7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set community harmless",
+            "description": null,
+            "arguments": {
+                "communityReputation": "harmless"
+            },
+            "status": null,
+            "top": "620",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "12b081a5-aca9-4cf8-9306-86e806b952eb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set community malicious",
+            "description": null,
+            "arguments": {
+                "communityReputation": "malicious"
+            },
+            "status": null,
+            "top": "720",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "bdc0a064-9aa2-41fd-8d13-9e3d8e120274"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set No community reputation",
+            "description": null,
+            "arguments": {
+                "communityReputation": "no reputation"
+            },
+            "status": null,
+            "top": "920",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "7c30b47e-0629-4ac0-8236-1985e51ff13a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if vars.steps.Get_ip_reputation.data %}\n{{vars.ip_type}} {{vars.ip}} is {{vars.vtReputation}}\n{% else %}\nThere was an error in retrieving reputation data\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "460",
+            "left": "1480",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "7ae17cf4-587b-43cf-ba16-fd9902198a36"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set community neutral reputation",
+            "description": null,
+            "arguments": {
+                "communityReputation": "neutral"
+            },
+            "status": null,
+            "top": "820",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "b6f791ff-11e0-4245-8923-c51c992fd8cf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Virus Total Scanner Determination",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/18b917bc-a86d-4f3d-8637-56edd9fa4302",
+                        "condition": "{{ vars.vtHarmless == 0 and vars.vtMalicious == 0 }}",
+                        "step_name": "Set VT No Reputation"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/18bd14f8-2439-474b-a238-bfd5e2d4fbde",
+                        "condition": "{{ vars.vtHarmless > (vars.vtMalicious + vars.vtSuspicious) }}",
+                        "step_name": "Set VT Rep harmless"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/8bb0bfd8-d662-4f85-855d-aa355062d93d",
+                        "condition": "{{ vars.vtHarmless < (vars.vtMalicious + vars.vtSuspicious) }}",
+                        "step_name": "Set VT Rep Malicious"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/ebea30dd-6b46-46ab-9f7e-53574bbe6e65",
+                        "condition": "{{ vars.vtHarmless == (vars.vtMalicious + vars.vtSuspicious) }}",
+                        "step_name": "Set VT Rep Neutral"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "240",
+            "left": "460",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "d75f5a8b-3737-4615-b829-dbad2dc70b39"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set VT Rep harmless",
+            "description": null,
+            "arguments": {
+                "vtReputation": "harmless"
+            },
+            "status": null,
+            "top": "100",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "18bd14f8-2439-474b-a238-bfd5e2d4fbde"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set VT Rep Malicious",
+            "description": null,
+            "arguments": {
+                "vtReputation": "malicious"
+            },
+            "status": null,
+            "top": "180",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "8bb0bfd8-d662-4f85-855d-aa355062d93d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set VT Rep Neutral",
+            "description": null,
+            "arguments": {
+                "vtReputation": "neutral"
+            },
+            "status": null,
+            "top": "260",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ebea30dd-6b46-46ab-9f7e-53574bbe6e65"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set VT No Reputation",
+            "description": null,
+            "arguments": {
+                "vtReputation": "no reputation"
+            },
+            "status": null,
+            "top": "340",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "18b917bc-a86d-4f3d-8637-56edd9fa4302"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set output vars",
+            "description": null,
+            "arguments": {
+                "summary": "{{vars.steps.Create_Summary.data['formatted_string']}}",
+                "json_response": "{{vars.outputJSON}}",
+                "summary_detail": "{{vars.steps.Create_Summary_Detail.data['formatted_string']}}"
+            },
+            "status": null,
+            "top": "460",
+            "left": "2360",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "95cc177c-6371-4e24-8c2c-9ee2119fbad2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Summary_Detail",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if vars.steps.Get_ip_reputation.data %}\n{{vars.ip_type}} Virus Total Result Summary for IP {{vars.ip}}\n \nVirusTotal Scanner Analysis Reputation is {{vars.vtReputation}}\nScanner Harmless Votes - {{vars.vtHarmless}}\nScanner Malicious Votes - {{vars.vtMalicious}}\nScanner Suspicious Votes - {{vars.vtSuspicious}}\n\nCommunity Reputation is {{vars.communityReputation}}\nCommunity Harmless Votes - {{vars.communityHarmless}}\nCommunity Malicious Votes - {{vars.communityMalicious}}\n{% else %}\nThere was an error in retrieving reputation data\n\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "460",
+            "left": "1880",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "dd813687-5974-4c49-8cf8-fcb2d0a6e13d"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get IP from calling playbook",
+            "targetStep": "\/api\/3\/workflow_steps\/ac4f5ef5-e2e2-42fb-ace6-dc1b694e0593",
+            "sourceStep": "\/api\/3\/workflow_steps\/2be247cd-f497-4778-b658-95c84b834967",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "22f8f164-b02e-4a93-8ae1-0b44d05b2a09"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get IP from calling playbook -> Get ip reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/c77ab8ff-54cf-4337-b976-5da4b7b48538",
+            "sourceStep": "\/api\/3\/workflow_steps\/ac4f5ef5-e2e2-42fb-ace6-dc1b694e0593",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a3d63b3e-056f-40d0-894c-76a14fd35d51"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get ip reputation -> Extract interesting variables",
+            "targetStep": "\/api\/3\/workflow_steps\/162ef8d8-0802-4c05-bba6-b016032947dc",
+            "sourceStep": "\/api\/3\/workflow_steps\/c77ab8ff-54cf-4337-b976-5da4b7b48538",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e8380a0d-e8f6-4f64-8d4a-44ae288fb19c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract interesting variables -> Community Determined Malicious Check",
+            "targetStep": "\/api\/3\/workflow_steps\/cb0b42e6-8fef-4f85-826e-ca8436b6a9c7",
+            "sourceStep": "\/api\/3\/workflow_steps\/162ef8d8-0802-4c05-bba6-b016032947dc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "13ef5536-8e2b-44f4-a4db-4547e55fdd16"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set No community reputation -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/7c30b47e-0629-4ac0-8236-1985e51ff13a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "081fe1eb-8ff1-48eb-8cc5-078a4f9d54e9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set community harmless -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/12b081a5-aca9-4cf8-9306-86e806b952eb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8f26f029-90f9-41e9-831e-3607f3c45352"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set community malicious -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/bdc0a064-9aa2-41fd-8d13-9e3d8e120274",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ba167520-d8ff-4450-b3f7-4550400e17b2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set community neutral reputation -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/b6f791ff-11e0-4245-8923-c51c992fd8cf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f1c5cd39-a396-4269-b018-7865650b69ac"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract interesting variables -> Virus Total Scanner Determination",
+            "targetStep": "\/api\/3\/workflow_steps\/d75f5a8b-3737-4615-b829-dbad2dc70b39",
+            "sourceStep": "\/api\/3\/workflow_steps\/162ef8d8-0802-4c05-bba6-b016032947dc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e8fa3f5f-1808-4afd-abe2-492c40e577d9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set VT Rep harmless -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/18bd14f8-2439-474b-a238-bfd5e2d4fbde",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b7bfce27-f279-4cee-a6e5-6ae932478402"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set VT No Reputation -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/18b917bc-a86d-4f3d-8637-56edd9fa4302",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6a5f4f0a-180d-4b63-8b31-2011c773da3d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set VT Rep Neutral -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/ebea30dd-6b46-46ab-9f7e-53574bbe6e65",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a4adaa54-712b-493b-ae29-0f1dc49d181f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set VT Rep Malicious -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "sourceStep": "\/api\/3\/workflow_steps\/8bb0bfd8-d662-4f85-855d-aa355062d93d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e5b3d3fa-a315-41fe-a717-df13c26d9d65"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Community Determined Malicious Check -> Set community harmless",
+            "targetStep": "\/api\/3\/workflow_steps\/12b081a5-aca9-4cf8-9306-86e806b952eb",
+            "sourceStep": "\/api\/3\/workflow_steps\/cb0b42e6-8fef-4f85-826e-ca8436b6a9c7",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "d6d5e5de-2151-4154-84e6-4b617c61147d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Community Determined Malicious Check -> Set community malicious",
+            "targetStep": "\/api\/3\/workflow_steps\/bdc0a064-9aa2-41fd-8d13-9e3d8e120274",
+            "sourceStep": "\/api\/3\/workflow_steps\/cb0b42e6-8fef-4f85-826e-ca8436b6a9c7",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "0f82b7de-ea29-44a4-aedf-22cde58a10ca"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Community Determined Malicious Check -> Set No community reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/7c30b47e-0629-4ac0-8236-1985e51ff13a",
+            "sourceStep": "\/api\/3\/workflow_steps\/cb0b42e6-8fef-4f85-826e-ca8436b6a9c7",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "dd4c04a6-2b51-4e45-8450-cfcdfbc97f10"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Community Determined Malicious Check -> Set community neutral reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/b6f791ff-11e0-4245-8923-c51c992fd8cf",
+            "sourceStep": "\/api\/3\/workflow_steps\/cb0b42e6-8fef-4f85-826e-ca8436b6a9c7",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "24ea21dc-ff09-4ad6-9232-f809e5cbf233"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Virus Total Scanner Determination -> Set VT Rep harmless",
+            "targetStep": "\/api\/3\/workflow_steps\/18bd14f8-2439-474b-a238-bfd5e2d4fbde",
+            "sourceStep": "\/api\/3\/workflow_steps\/d75f5a8b-3737-4615-b829-dbad2dc70b39",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "bb4939a6-3a5d-4f84-82fe-f10c5fe91be3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Virus Total Scanner Determination -> Set VT Rep Malicious",
+            "targetStep": "\/api\/3\/workflow_steps\/8bb0bfd8-d662-4f85-855d-aa355062d93d",
+            "sourceStep": "\/api\/3\/workflow_steps\/d75f5a8b-3737-4615-b829-dbad2dc70b39",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "799d88d5-57ad-4424-bf36-1b0b652f0311"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Virus Total Scanner Determination -> Set VT Rep Neutral",
+            "targetStep": "\/api\/3\/workflow_steps\/ebea30dd-6b46-46ab-9f7e-53574bbe6e65",
+            "sourceStep": "\/api\/3\/workflow_steps\/d75f5a8b-3737-4615-b829-dbad2dc70b39",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "35fcb665-e326-42c0-890c-853ee08e7190"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Virus Total Scanner Determination -> Set VT No Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/18b917bc-a86d-4f3d-8637-56edd9fa4302",
+            "sourceStep": "\/api\/3\/workflow_steps\/d75f5a8b-3737-4615-b829-dbad2dc70b39",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "b9f8208f-ff6d-4b71-9ae2-b085d8a68613"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Summary -> Create Summary_Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/dd813687-5974-4c49-8cf8-fcb2d0a6e13d",
+            "sourceStep": "\/api\/3\/workflow_steps\/7ae17cf4-587b-43cf-ba16-fd9902198a36",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a59e543e-2139-48be-a086-2b2f6040467e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Summary_Detail -> Set output vars",
+            "targetStep": "\/api\/3\/workflow_steps\/95cc177c-6371-4e24-8c2c-9ee2119fbad2",
+            "sourceStep": "\/api\/3\/workflow_steps\/dd813687-5974-4c49-8cf8-fcb2d0a6e13d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "92ffdfff-4ed8-4051-9890-a7e2bc88d3ac"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "655a45a4-6b76-466f-b84f-73f7dee68060",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM-Reference"
+    ]
+}

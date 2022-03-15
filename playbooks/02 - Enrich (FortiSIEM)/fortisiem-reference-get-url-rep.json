@@ -1,0 +1,728 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-reference-get-url-rep",
+    "aliasName": null,
+    "tag": "#Subroutine",
+    "description": "Get Reputation of URL nested playbook",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "indicator_value"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/847ed40b-9ea8-4b8f-a210-fa5d171d27fe",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Set No reputation",
+            "description": null,
+            "arguments": {
+                "Reputation_Type_Text": "not available"
+            },
+            "status": null,
+            "top": "260",
+            "left": "2440",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "4a935096-963f-4ba8-85ed-abfd3938318c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Reputation from URLVoid",
+            "description": null,
+            "arguments": {
+                "name": "URLVoid",
+                "config": "80158417-6916-4f4f-b979-fc84ea02e2be",
+                "params": {
+                    "domain": "{{vars.indicator_value}}",
+                    "rescan": true
+                },
+                "version": "1.1.0",
+                "connector": "urlvoid",
+                "operation": "domain_reputation",
+                "ignore_errors": true,
+                "operationTitle": "Get Website Reputation ",
+                "step_variables": {
+                    "foundURLvoidReputation": "{{ ( vars.result.data and vars.result.data | length > 0 ) | ternary(true,false) }}"
+                }
+            },
+            "status": null,
+            "top": "360",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "0bdb3cf3-d7e6-4a47-9bb1-f9e27c3bfae6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get URL Reputation from Anomali",
+            "description": null,
+            "arguments": {
+                "name": "Anomali ThreatStream",
+                "config": "8827ae00-b86a-4ed4-aa2c-deae42b1d993",
+                "params": {
+                    "value": "{{vars.indicator_value}}",
+                    "validation": false,
+                    "filter_option": "Exact",
+                    "record_number": "Fetch All Records"
+                },
+                "version": "2.0.0",
+                "connector": "threatstream",
+                "operation": "url_reputation",
+                "ignore_errors": true,
+                "operationTitle": "Get URL Reputation",
+                "step_variables": {
+                    "foundAnomaliReputation": "{{ ( vars.result.data.objects and vars.result.data.objects | length > 0 ) | ternary(true,false) }}"
+                }
+            },
+            "status": null,
+            "top": "280",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "53f8bbb1-5cf7-498c-92fa-420455f04629"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute VT Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if vars.steps.Get_URL_Reputation_from_VT.data %}\nVirus Total URL Reputation\n{{vars.steps.Get_URL_Reputation_from_VT.data.attributes.url}}\n{% if vars.steps.Get_URL_Reputation_from_VT.data.attributes.title %}\nTitle: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes.title}}\n{% endif %}\n{% if vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats'] %}\nScanner Results: \nScanner Harmless Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats'].harmless}}\nScanner Malicious Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats'].malicious}}\nScanner Suspicious Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats'].suspicious}}\nScanner Undetected Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats'].undetected}}\n{% endif %}\n{% if vars.steps.Get_URL_Reputation_from_VT.data.attributes.total_votes %}\nCommunity Harmless Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes.total_votes.harmless}}\nCommunity Malicious Votes: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes.total_votes.malicious}}\n{% endif %}\nURL Reputation: {{vars.steps.Get_URL_Reputation_from_VT.data.attributes.reputation}}\nScore of -100 Meaning: 100% Malicious\nScore of +100 Meaning: 100% Benign\/Safe\nScore of ~0 Meaning: Implies Neutral or non confident reputation\n\n{% else %}\nVirusTotal did not return any data on this object\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText",
+                "step_variables": {
+                    "test": "{{vars.steps.Get_URL_Reputation_from_VT.data.attributes['last_analysis_stats']}}"
+                }
+            },
+            "status": null,
+            "top": "200",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "a1b4824d-8253-484a-b620-cb4e8c1e86bf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get URL Reputation from Fortinet Web Filter",
+            "description": null,
+            "arguments": {
+                "name": "Fortinet Web Filter Lookup",
+                "config": "30ec97b3-5d84-4372-9f13-f085f0208444",
+                "params": {
+                    "sample_url": "{{vars.indicator_value}}"
+                },
+                "version": "1.0.0",
+                "connector": "fortinet-web-filter-lookup",
+                "operation": "url_review",
+                "ignore_errors": true,
+                "operationTitle": "Check Category of Domain or URL",
+                "step_variables": {
+                    "foundFortinetWebFilterReputation": "{{ ( vars.result.data and (vars.result.data | length > 0) ) | ternary(true,false) }}"
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "c45001f4-94bb-4209-810c-02b2497ebd71"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Fortinet Web Filter Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "Fortinet Web Filter lookup\n{% if  vars.foundFortinetWebFilterReputation %}\nCategory\n{{vars.steps.Get_URL_Reputation_from_Fortinet_Web_Filter.data.category}}\n{% else %}\nThere is no Fortinet Web Filter URL Reputation\n{% endif %}\n"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "ignore_errors": true,
+                "operationTitle": "Utils: Format as RichText",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "440",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "171d33a0-c1a5-49c7-b23f-d5ac419983c5"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Anomali Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "Anomali ThreatStream URL Reputation\n{% if vars.foundAnomaliReputation %}\nReference Link https:\/\/ui.threatstream.com\/detail\/hash\/{{vars.indicator_value}}\n{% if vars.steps.Get_URL_Reputation_from_Anomali.data.objects[0].threatscore %}\nThreat Score: {{vars.steps.Get_URL_Reputation_from_Anomali.data.objects[0].threatscore}}\n{% endif %}\n{% if vars.steps.Get_URL_Reputation_from_Anomali.data.objects[0].meta.severity %}\nSeverity  {{vars.steps.Get_URL_Reputation_from_Anomali.data.objects[0].meta.severity}}\n{% endif %}\n{% else %}\nThere was no Anomali ThreatStream Data Available\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "280",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "c49c5f11-0363-486b-80bc-bbf901df2e10"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Malicious",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Malicious",
+                        "step_iri": "\/api\/3\/workflow_steps\/fdcd82d3-3a2e-4557-bc8e-8e3604c699f2",
+                        "condition": "{{ vars.steps.Get_URL_Reputation_from_VT.data.attributes.reputation < 0 }}",
+                        "step_name": "Set Malicious"
+                    },
+                    {
+                        "option": "No Reputation",
+                        "step_iri": "\/api\/3\/workflow_steps\/4a935096-963f-4ba8-85ed-abfd3938318c",
+                        "condition": "{{ vars.steps.Get_URL_Reputation_from_VT.data.attributes.reputation >=0 and vars.steps.Get_URL_Reputation_from_VT.data.attributes.reputation <=10 }}",
+                        "step_name": "Set No reputation"
+                    },
+                    {
+                        "option": "safe",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/9e139979-b907-4c03-becf-bcb99a889c8a",
+                        "step_name": "Set Good"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "200",
+            "left": "1980",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "e3593414-e018-4185-ac21-b0825607748e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Enrichment Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if vars.Reputation_Type_Text and vars.steps.Get_URL_Reputation_from_VT.data.attributes.url %}\nReputation of URL {{vars.steps.Get_URL_Reputation_from_VT.data.attributes.url}} is {{vars.Reputation_Type_Text}}\n{% else %}Reputation data could not be found\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "400",
+            "left": "2880",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "8ff63a67-f631-4776-a8f2-69c7ebca0655"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Upon Create",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Final Output",
+                        "step_iri": "\/api\/3\/workflow_steps\/caa10d5c-2e7d-4d1d-805d-5dd3eb3c230e",
+                        "condition": "{{ vars.input.params['indicator_value'] | length > 0 }}",
+                        "step_name": "Summary"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "400",
+            "left": "3520",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "8ee1e1cb-63e9-4ee7-a8ff-a366ea6aa2af"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Malicious",
+            "description": null,
+            "arguments": {
+                "Reputation_Type_Text": "malicious"
+            },
+            "status": null,
+            "top": "100",
+            "left": "2440",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "fdcd82d3-3a2e-4557-bc8e-8e3604c699f2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Summary",
+            "description": null,
+            "arguments": {
+                "detail": "{{vars.steps.Set_Detail.data['formatted_string']}}",
+                "summary": "{{vars.steps.Enrichment_Summary.data['formatted_string']}}",
+                "reputation": "{{vars.Reputation_Type_Text}}",
+                "URL_VTResultJSON": "{{vars.steps.Get_URL_Reputation_from_VT.data}}",
+                "URL_AnomaliResultJSON": "{{vars.steps.Get_URL_Reputation_from_Anomali.data}}",
+                "enrichment_summary_vt": "{{vars.steps.Compute_VT_Summary.data['formatted_string']}}",
+                "enrichment_summary_anomali": "{{vars.steps.Compute_Anomali_Summary.data['formatted_string']}}",
+                "enrichment_summary_urlvoid": "{{vars.steps.Compute_URLVoid_Summary.data['formatted_string']}}",
+                "enrichment_summary_fortiweb": "{{vars.steps.Compute_Fortinet_Web_Filter_Summary.data['formatted_string']}}"
+            },
+            "status": null,
+            "top": "400",
+            "left": "3880",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "caa10d5c-2e7d-4d1d-805d-5dd3eb3c230e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Good",
+            "description": null,
+            "arguments": {
+                "Reputation_Type_Text": "harmless"
+            },
+            "status": null,
+            "top": "180",
+            "left": "2440",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "9e139979-b907-4c03-becf-bcb99a889c8a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get URL Reputation from VT",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "12ebc61f-c59d-4943-95b6-72778113c6f5",
+                "params": {
+                    "url": "{{vars.indicator_value}}"
+                },
+                "version": "2.0.0",
+                "connector": "virustotal",
+                "operation": "query_url",
+                "ignore_errors": true,
+                "operationTitle": "Get URL Reputation",
+                "step_variables": [],
+                "operationOutput": {
+                    "scans": [],
+                    "total": "",
+                    "scan_id": "",
+                    "resource": "",
+                    "aggregate": "",
+                    "permalink": "",
+                    "positives": "",
+                    "scan_date": "",
+                    "verbose_msg": ""
+                }
+            },
+            "status": null,
+            "top": "200",
+            "left": "860",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "6b73cdd3-9fe7-41b8-aadd-4b9b4cfbb895"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute URLVoid Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "URLVoid Reputation\n{% if vars.foundURLvoidReputation %}\nhttps:\/\/www.urlvoid.com\/scan\/{{vars.indicator_value.split('\/')[-1]}}\nReputation \n{% if 'detections' in vars.steps.Get_Reputation_from_URLVoid.data %}\n{{vars.steps.Get_Reputation_from_URLVoid.data.detections.count}} \n{% else %}\n0                                                                                                     \n{% endif %}\nIP Address\n{{vars.steps.Get_Reputation_from_URLVoid.data.details.ip.addr}}                 \n{% else %}\nThere was no URLVoid Reputation Data Available\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "360",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "cb53c68d-95fe-415b-b746-7672ef687ff1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Called from playbook",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "120",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "847ed40b-9ea8-4b8f-a210-fa5d171d27fe"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If URL exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+                        "step_name": "Set Var"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/7c8b1d21-21d3-4270-a98d-6f90f4c35a2f",
+                        "condition": "{{ vars.input.params['indicator_value'] is not defined }}",
+                        "step_name": "Set Error Not Exists"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/7c8b1d21-21d3-4270-a98d-6f90f4c35a2f",
+                        "condition": "{{ vars.input.params['indicator_value'] is none or vars.input.params['indicator_value'] == \"\" }}",
+                        "step_name": "Set Error Not Exists"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "240",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "2dc44d2f-0b15-4cc6-8647-477c604d0441"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Error Not Exists",
+            "description": null,
+            "arguments": {
+                "url_error": "\"indicator_value does not exist\""
+            },
+            "status": null,
+            "top": "780",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "7c8b1d21-21d3-4270-a98d-6f90f4c35a2f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If data is not NULL",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Response exists",
+                        "step_iri": "\/api\/3\/workflow_steps\/e3593414-e018-4185-ac21-b0825607748e",
+                        "condition": "{{ vars.steps.Get_URL_Reputation_from_VT.data is defined and vars.steps.Get_URL_Reputation_from_VT.data is not none }}",
+                        "step_name": "Is Malicious"
+                    },
+                    {
+                        "option": "Does not exist",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/115eb99b-caed-4eb7-82d0-8a12708c5c33",
+                        "step_name": "Set VT Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "200",
+            "left": "1520",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "1753648a-ee16-4746-836c-e840322a5001"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set VT Error",
+            "description": null,
+            "arguments": {
+                "VTError": "data result was NULL"
+            },
+            "status": null,
+            "top": "40",
+            "left": "1820",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "115eb99b-caed-4eb7-82d0-8a12708c5c33"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Var",
+            "description": null,
+            "arguments": {
+                "url": "{{vars.input.params['indicator_value']}}"
+            },
+            "status": null,
+            "top": "240",
+            "left": "380",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "0dd00b7f-110a-4416-8ad0-585b4c59dc7e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Detail",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{{vars.steps.Compute_VT_Summary.data['formatted_string']}}\n{{vars.steps.Compute_URLVoid_Summary.data['formatted_string']}}\n{{vars.steps.Compute_Anomali_Summary.data['formatted_string']}}\n{{vars.steps.Compute_Fortinet_Web_Filter_Summary.data['formatted_string']}}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "400",
+            "left": "3200",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "6933d0ba-4427-4463-be7d-1c7c6567e178"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get File Reputation from Anomali -> Compute Anomali Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/c49c5f11-0363-486b-80bc-bbf901df2e10",
+            "sourceStep": "\/api\/3\/workflow_steps\/53f8bbb1-5cf7-498c-92fa-420455f04629",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "77f3023d-9b40-4999-9f59-01937ea458c8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Reputation from URLVoid -> Copy  of Compute AV OTX Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/cb53c68d-95fe-415b-b746-7672ef687ff1",
+            "sourceStep": "\/api\/3\/workflow_steps\/0bdb3cf3-d7e6-4a47-9bb1-f9e27c3bfae6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a4d6f925-5fe0-4f1d-b4fa-73e482a62a15"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious -> Set Malicious 1",
+            "targetStep": "\/api\/3\/workflow_steps\/fdcd82d3-3a2e-4557-bc8e-8e3604c699f2",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3593414-e018-4185-ac21-b0825607748e",
+            "label": "Malicious",
+            "isExecuted": false,
+            "uuid": "febbf31c-8ad3-46cc-b445-1bae2a1abcc0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious -> Set Goodc",
+            "targetStep": "\/api\/3\/workflow_steps\/9e139979-b907-4c03-becf-bcb99a889c8a",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3593414-e018-4185-ac21-b0825607748e",
+            "label": "safe",
+            "isExecuted": false,
+            "uuid": "e8dcffd5-ff8a-435b-bf5c-a619c494f83f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious -> Set No reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/4a935096-963f-4ba8-85ed-abfd3938318c",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3593414-e018-4185-ac21-b0825607748e",
+            "label": "No Reputation",
+            "isExecuted": false,
+            "uuid": "964e9dc6-9aa8-4a25-99ae-410c0ea8c0b8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Malicious -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/fdcd82d3-3a2e-4557-bc8e-8e3604c699f2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "09b5574f-60d9-4e92-b3f7-ebc8cd65c305"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Good -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/9e139979-b907-4c03-becf-bcb99a889c8a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8447fa82-38a0-46a2-bf24-6e618661a2e0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set No reputation -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/4a935096-963f-4ba8-85ed-abfd3938318c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "422c61e0-7e94-4abd-8a1b-6b3c095001bd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get URL Reputation from VT -> Compute VT Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/a1b4824d-8253-484a-b620-cb4e8c1e86bf",
+            "sourceStep": "\/api\/3\/workflow_steps\/6b73cdd3-9fe7-41b8-aadd-4b9b4cfbb895",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b8348633-d46e-4d78-9673-ace3706a7535"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Domain Reputation from Fortinet Web Filter -> Compute Fortinet Web Filter Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/171d33a0-c1a5-49c7-b23f-d5ac419983c5",
+            "sourceStep": "\/api\/3\/workflow_steps\/c45001f4-94bb-4209-810c-02b2497ebd71",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4349aebc-6815-45cf-b3d5-55ed724354c4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Called from playbook -> If URL exists",
+            "targetStep": "\/api\/3\/workflow_steps\/2dc44d2f-0b15-4cc6-8647-477c604d0441",
+            "sourceStep": "\/api\/3\/workflow_steps\/847ed40b-9ea8-4b8f-a210-fa5d171d27fe",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4628cdd9-b15e-4f4b-b455-350e8a93a40b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Anomali Summary -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/c49c5f11-0363-486b-80bc-bbf901df2e10",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "fe6987ea-6ec8-4c23-a5a0-8f3ba0db1fcf"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute VT Summary -> If data is not NULL",
+            "targetStep": "\/api\/3\/workflow_steps\/1753648a-ee16-4746-836c-e840322a5001",
+            "sourceStep": "\/api\/3\/workflow_steps\/a1b4824d-8253-484a-b620-cb4e8c1e86bf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5c8a1d01-1fa6-4d61-92a1-c1920dc44b60"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If data is not NULL -> Set VT Error",
+            "targetStep": "\/api\/3\/workflow_steps\/115eb99b-caed-4eb7-82d0-8a12708c5c33",
+            "sourceStep": "\/api\/3\/workflow_steps\/1753648a-ee16-4746-836c-e840322a5001",
+            "label": "Does not exist",
+            "isExecuted": false,
+            "uuid": "3a3ed562-a02c-45fb-91c2-2879cb7b622a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If data is not NULL -> Is Malicious",
+            "targetStep": "\/api\/3\/workflow_steps\/e3593414-e018-4185-ac21-b0825607748e",
+            "sourceStep": "\/api\/3\/workflow_steps\/1753648a-ee16-4746-836c-e840322a5001",
+            "label": "Response exists",
+            "isExecuted": false,
+            "uuid": "504a85a9-4ca9-4396-a485-548f7806cb4e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Upon Create -> Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/caa10d5c-2e7d-4d1d-805d-5dd3eb3c230e",
+            "sourceStep": "\/api\/3\/workflow_steps\/8ee1e1cb-63e9-4ee7-a8ff-a366ea6aa2af",
+            "label": "Final Output",
+            "isExecuted": false,
+            "uuid": "b86bdb8c-d95a-4901-8656-fe9108f41cfe"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If URL exists -> Set Error Not Exists",
+            "targetStep": "\/api\/3\/workflow_steps\/7c8b1d21-21d3-4270-a98d-6f90f4c35a2f",
+            "sourceStep": "\/api\/3\/workflow_steps\/2dc44d2f-0b15-4cc6-8647-477c604d0441",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "4e0ac905-5077-4702-b118-f4e32c374f88"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute URLVoid Summary -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/cb53c68d-95fe-415b-b746-7672ef687ff1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "183ab97d-1f30-474b-ae1b-3fe0ceba6f84"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Fortinet Web Filter Summary -> Enrichment Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "sourceStep": "\/api\/3\/workflow_steps\/171d33a0-c1a5-49c7-b23f-d5ac419983c5",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e9f4cfdf-4bef-4af1-a244-997aac5cd2e1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Var -> Get URL Reputation from VT",
+            "targetStep": "\/api\/3\/workflow_steps\/6b73cdd3-9fe7-41b8-aadd-4b9b4cfbb895",
+            "sourceStep": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0165461a-a802-49e0-b7f0-b2439da92a05"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Var -> Get URL Reputation from Anomali",
+            "targetStep": "\/api\/3\/workflow_steps\/53f8bbb1-5cf7-498c-92fa-420455f04629",
+            "sourceStep": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c7888686-3bbd-4fb3-b289-7a9f5e7e148d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Var -> Get Reputation from URLVoid",
+            "targetStep": "\/api\/3\/workflow_steps\/0bdb3cf3-d7e6-4a47-9bb1-f9e27c3bfae6",
+            "sourceStep": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "37ca40d6-b1d6-4ad4-a3bc-e29991abef21"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If URL exists -> Set Var",
+            "targetStep": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+            "sourceStep": "\/api\/3\/workflow_steps\/2dc44d2f-0b15-4cc6-8647-477c604d0441",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "a14123ba-b209-424d-9032-6921655679ba"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Var -> Get URL Reputation from Fortinet Web Filter",
+            "targetStep": "\/api\/3\/workflow_steps\/c45001f4-94bb-4209-810c-02b2497ebd71",
+            "sourceStep": "\/api\/3\/workflow_steps\/0dd00b7f-110a-4416-8ad0-585b4c59dc7e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f7f56782-4d90-4993-b300-1d1548ddf6bb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Enrichment Summary -> Set Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/6933d0ba-4427-4463-be7d-1c7c6567e178",
+            "sourceStep": "\/api\/3\/workflow_steps\/8ff63a67-f631-4776-a8f2-69c7ebca0655",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "63dad882-0789-4c2a-8332-01d8850833d8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Detail -> Is Upon Create",
+            "targetStep": "\/api\/3\/workflow_steps\/8ee1e1cb-63e9-4ee7-a8ff-a366ea6aa2af",
+            "sourceStep": "\/api\/3\/workflow_steps\/6933d0ba-4427-4463-be7d-1c7c6567e178",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3aaf22cc-36c7-4ff6-ae28-628fa8bd623c"
+        }
+    ],
+    "priority": null,
+    "uuid": "4aff7f09-a406-4d3e-85d4-a41904b92e6d",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM-Reference"
+    ]
+}
