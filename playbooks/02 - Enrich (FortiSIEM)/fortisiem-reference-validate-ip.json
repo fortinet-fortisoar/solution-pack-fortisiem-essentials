@@ -1,0 +1,290 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-reference-validate-ip",
+    "aliasName": null,
+    "tag": null,
+    "description": "FortiSIEM Validate IP address is valid nested playbook",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "ip"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/20dc9068-fc70-4dae-80c2-77764e12304b",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "20dc9068-fc70-4dae-80c2-77764e12304b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "extract ip via regex",
+            "description": "Some fields may contain text other than just the IP address.",
+            "arguments": {
+                "ip": "{{vars.ip| regex_search(\"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\")}}"
+            },
+            "status": null,
+            "top": "340",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "4bcb14b6-eace-4bb2-8d9c-7dc6b36e398e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Error",
+            "description": null,
+            "arguments": {
+                "ip_error": "\"IP does not exist or empty\""
+            },
+            "status": null,
+            "top": "460",
+            "left": "700",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "24d7666e-8fde-473a-a219-54bf720d32bd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If IP is of type IP",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/430e2479-5b35-4e60-a60d-2f0b0cb21ddc",
+                        "condition": "{{ not not (vars.ip | ipaddr) }}",
+                        "step_name": "Check if IP in RFC1918"
+                    },
+                    {
+                        "option": "No",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+                        "step_name": "Set Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "460",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "f1735762-aa2b-4de1-9c88-e675cd808dc0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Check if IP in RFC1918",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "cidr": "['10.0.0.0\/8','172.16.0.0\/12','192.168.0.0\/16']",
+                    "ip_address": "{{vars.ip}}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "ip_cidr_check",
+                "operationTitle": "Utils: Is IP in CIDR",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "600",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "430e2479-5b35-4e60-a60d-2f0b0cb21ddc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If IP is Private IP",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Is Private",
+                        "step_iri": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+                        "condition": "{{ vars.steps.Check_if_IP_in_RFC1918.data['ip_matched'] }}",
+                        "step_name": "Set Error"
+                    },
+                    {
+                        "option": "Is Public",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/4e7aa4e0-ebee-4503-bedf-b94516bf10b5",
+                        "step_name": "Assign return IP"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "740",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "3dc4db04-5817-4b31-b775-0c05b569e1f4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Assign return IP",
+            "description": null,
+            "arguments": {
+                "return_ip": "{{vars.ip}}"
+            },
+            "status": null,
+            "top": "880",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "4e7aa4e0-ebee-4503-bedf-b94516bf10b5"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set input IP",
+            "description": null,
+            "arguments": {
+                "ip": "{{vars.input.params.ip}}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "492c0a70-a723-4d31-bc40-c5dce39f0aa0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If IP Exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/4bcb14b6-eace-4bb2-8d9c-7dc6b36e398e",
+                        "condition": "{{ not not (vars.ip) }}",
+                        "step_name": "extract ip via regex"
+                    },
+                    {
+                        "option": "No",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+                        "step_name": "Set Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "220",
+            "left": "220",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "48f8f144-d332-4ba7-99b3-23ac6ea00a82"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP is of type IP -> Set Error",
+            "targetStep": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+            "sourceStep": "\/api\/3\/workflow_steps\/f1735762-aa2b-4de1-9c88-e675cd808dc0",
+            "label": "No",
+            "isExecuted": false,
+            "uuid": "b4773e2b-343c-4277-a957-24242fd0ccc9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "extract ip -> If IP is of type IP",
+            "targetStep": "\/api\/3\/workflow_steps\/f1735762-aa2b-4de1-9c88-e675cd808dc0",
+            "sourceStep": "\/api\/3\/workflow_steps\/4bcb14b6-eace-4bb2-8d9c-7dc6b36e398e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b44b5c4f-cf77-4bad-a5d9-a5b6104fb5ff"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP is of type IP -> Check if IP in RFC1918",
+            "targetStep": "\/api\/3\/workflow_steps\/430e2479-5b35-4e60-a60d-2f0b0cb21ddc",
+            "sourceStep": "\/api\/3\/workflow_steps\/f1735762-aa2b-4de1-9c88-e675cd808dc0",
+            "label": "Yes",
+            "isExecuted": false,
+            "uuid": "4ba3df74-76c0-4afc-90f4-aae029b0049e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Check if IP in RFC1918 -> If IP is Private IP",
+            "targetStep": "\/api\/3\/workflow_steps\/3dc4db04-5817-4b31-b775-0c05b569e1f4",
+            "sourceStep": "\/api\/3\/workflow_steps\/430e2479-5b35-4e60-a60d-2f0b0cb21ddc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d7fa2ff1-37e5-4e5b-ac7b-36bfb9735c43"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP is Private IP -> Set Error",
+            "targetStep": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+            "sourceStep": "\/api\/3\/workflow_steps\/3dc4db04-5817-4b31-b775-0c05b569e1f4",
+            "label": "Is Private",
+            "isExecuted": false,
+            "uuid": "4214258d-bc18-4f57-be75-b6eb766d942f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP is Private IP -> Assign return IP",
+            "targetStep": "\/api\/3\/workflow_steps\/4e7aa4e0-ebee-4503-bedf-b94516bf10b5",
+            "sourceStep": "\/api\/3\/workflow_steps\/3dc4db04-5817-4b31-b775-0c05b569e1f4",
+            "label": "Is Public",
+            "isExecuted": false,
+            "uuid": "df888642-0141-4acf-b710-9bfc4bf090af"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Set input IP",
+            "targetStep": "\/api\/3\/workflow_steps\/492c0a70-a723-4d31-bc40-c5dce39f0aa0",
+            "sourceStep": "\/api\/3\/workflow_steps\/20dc9068-fc70-4dae-80c2-77764e12304b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8a7e4dd7-5ccc-4cd3-8891-8e50b06cd32f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set input IP -> If IP Exists",
+            "targetStep": "\/api\/3\/workflow_steps\/48f8f144-d332-4ba7-99b3-23ac6ea00a82",
+            "sourceStep": "\/api\/3\/workflow_steps\/492c0a70-a723-4d31-bc40-c5dce39f0aa0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "1a538c9a-d28c-4625-8e88-9f05ea7c2b77"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP Exists -> extract ip",
+            "targetStep": "\/api\/3\/workflow_steps\/4bcb14b6-eace-4bb2-8d9c-7dc6b36e398e",
+            "sourceStep": "\/api\/3\/workflow_steps\/48f8f144-d332-4ba7-99b3-23ac6ea00a82",
+            "label": "Yes",
+            "isExecuted": false,
+            "uuid": "24c8d55a-de68-466b-8ea5-c41475d66239"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If IP Exists -> Set Error",
+            "targetStep": "\/api\/3\/workflow_steps\/24d7666e-8fde-473a-a219-54bf720d32bd",
+            "sourceStep": "\/api\/3\/workflow_steps\/48f8f144-d332-4ba7-99b3-23ac6ea00a82",
+            "label": "No",
+            "isExecuted": false,
+            "uuid": "4d0180ed-063a-4371-ae27-8f9e0b98ae31"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "3bb4c5ff-e4ab-40f9-ae26-73e82d63acf8",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM-Reference"
+    ]
+}

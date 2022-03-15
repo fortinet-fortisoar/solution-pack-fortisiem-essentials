@@ -1,0 +1,789 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-get-ip-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "FortiSIEM get IP reputation on attributes in an event or incident",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/1618d7f9-c6a8-4987-a401-5394314682ae",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "fsiem_get_ip_reputation_summary",
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "api_body": "{{vars.request.data}}"
+                        }
+                    }
+                },
+                "authentication_methods": [
+                    ""
+                ]
+            },
+            "status": null,
+            "top": "20",
+            "left": "80",
+            "stepType": "\/api\/3\/workflow_step_types\/df26c7a2-4166-4ca5-91e5-548e24c01b5f",
+            "uuid": "1618d7f9-c6a8-4987-a401-5394314682ae"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract Incident and Event Data for Inspection",
+            "description": null,
+            "arguments": {
+                "data": "{{vars.input.params['api_body']}}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "80",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "1796be48-4550-46b3-8d0e-5578a5bd9270"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Gather individual IP Vars",
+            "description": null,
+            "arguments": {
+                "srcIpAddr": "{{vars.data.srcIpAddr}}",
+                "destIpaddr": "{{vars.data.destIpAddr}}",
+                "hostIpAddr": "{{vars.data.hostIpAddr}}",
+                "incidentSrc": "{{vars.data.incidentSrc}}",
+                "incidentTarget": "{{vars.data.incidentTarget}}"
+            },
+            "status": null,
+            "top": "220",
+            "left": "80",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "d74412d2-0080-452d-a701-0cba7ae5bb8b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Validate Host IP",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.hostIpAddr}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/3bb4c5ff-e4ab-40f9-ae26-73e82d63acf8"
+            },
+            "status": null,
+            "top": "120",
+            "left": "520",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "63cdabc5-66aa-4a81-b1c8-c90901c71b54"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If Host IP Valid",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Valid",
+                        "step_iri": "\/api\/3\/workflow_steps\/dc5beef2-9d08-4106-95b4-d2205d1173cb",
+                        "condition": "{{ vars.steps.Validate_Host_IP.return_ip is defined }}",
+                        "step_name": "Set valid and extracted host IP"
+                    },
+                    {
+                        "option": "Not Valid",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/3250c1b4-f552-42a3-8a3e-5f95efcbf870",
+                        "step_name": "Set Host IP Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "120",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "e3a65829-0f6f-4350-b7c1-a8933b42c4ca"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set valid and extracted host IP",
+            "description": null,
+            "arguments": {
+                "hostIpAddr": "{{vars.steps.Validate_Host_IP.return_ip}}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "1160",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "dc5beef2-9d08-4106-95b4-d2205d1173cb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Validate Source IP",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.srcIpAddr}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/3bb4c5ff-e4ab-40f9-ae26-73e82d63acf8"
+            },
+            "status": null,
+            "top": "320",
+            "left": "520",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "1e2dadb4-3f69-4898-bfba-16763ca59b3c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Validate Dest IP",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.destIpaddr}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/3bb4c5ff-e4ab-40f9-ae26-73e82d63acf8"
+            },
+            "status": null,
+            "top": "540",
+            "left": "520",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "dc2e78a6-7a72-470b-a571-8d16aadd5df6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Validate Incident Target",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.incidentTarget}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/3bb4c5ff-e4ab-40f9-ae26-73e82d63acf8"
+            },
+            "status": null,
+            "top": "720",
+            "left": "520",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "e5a72f31-4695-4726-a064-44f2ffaead40"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If Source IP Valid",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Valid",
+                        "step_iri": "\/api\/3\/workflow_steps\/e6898669-5ec7-4453-8d0b-b89e978e5abb",
+                        "condition": "{{ vars.steps.Validate_Source_IP.return_ip is defined }}",
+                        "step_name": "Set valid Source IP"
+                    },
+                    {
+                        "option": "Not Valid",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/17123ef5-8e18-4c7e-b9e6-bd774a8360c1",
+                        "step_name": "Set Source IP Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "320",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "0131833b-3a63-427a-aea9-7dc046e379a9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If Dest IP Valid",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Valid",
+                        "step_iri": "\/api\/3\/workflow_steps\/68ea83a4-64c9-4235-afc6-b87e256b8799",
+                        "condition": "{{ vars.steps.Validate_Dest_IP.return_ip is defined }}",
+                        "step_name": "Set Valid Dest IP"
+                    },
+                    {
+                        "option": "Not Valid",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/f3a6fbcf-d9bf-4bac-9039-ce64d0fae604",
+                        "step_name": "Set Dest IP Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "540",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "d142dd7f-7ba1-4233-8905-400dd7d50e53"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If Incident Target Valid",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Valid",
+                        "step_iri": "\/api\/3\/workflow_steps\/ad61e851-b152-4b46-b291-1b8f6001a2e4",
+                        "condition": "{{ vars.steps.Validate_Incident_Target.return_ip is defined }}",
+                        "step_name": "Set Valid Incident Target"
+                    },
+                    {
+                        "option": "Not Valid",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/73e295e9-6622-4b4c-8e90-70b91cdb16de",
+                        "step_name": "Set IncidentTarget IP Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "720",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "95a31ac9-c4b0-4582-b6cf-dbf4743f1ed4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set valid Source IP",
+            "description": null,
+            "arguments": {
+                "srcIpAddr": "{{vars.steps.Validate_Source_IP.return_ip}}"
+            },
+            "status": null,
+            "top": "320",
+            "left": "1160",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "e6898669-5ec7-4453-8d0b-b89e978e5abb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Valid Dest IP",
+            "description": null,
+            "arguments": {
+                "destIpAddr": "{{vars.steps.Validate_Dest_IP.return_ip}}"
+            },
+            "status": null,
+            "top": "540",
+            "left": "1160",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "68ea83a4-64c9-4235-afc6-b87e256b8799"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Valid Incident Target",
+            "description": null,
+            "arguments": {
+                "incidentTarget": "{{vars.steps.Validate_Incident_Target.return_ip}}"
+            },
+            "status": null,
+            "top": "720",
+            "left": "1140",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ad61e851-b152-4b46-b291-1b8f6001a2e4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Host IP Error",
+            "description": null,
+            "arguments": {
+                "hostIpAddrError": "IP was not valid"
+            },
+            "status": null,
+            "top": "20",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "3250c1b4-f552-42a3-8a3e-5f95efcbf870"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Source IP Error",
+            "description": null,
+            "arguments": {
+                "srcIpAddrError": "IP was not valid"
+            },
+            "status": null,
+            "top": "220",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "17123ef5-8e18-4c7e-b9e6-bd774a8360c1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Dest IP Error",
+            "description": null,
+            "arguments": {
+                "destIpAddrError": "IP was not valid"
+            },
+            "status": null,
+            "top": "440",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "f3a6fbcf-d9bf-4bac-9039-ce64d0fae604"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set IncidentTarget IP Error",
+            "description": null,
+            "arguments": {
+                "incidentTargetError": "IP was not valid"
+            },
+            "status": null,
+            "top": "620",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "73e295e9-6622-4b4c-8e90-70b91cdb16de"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "AggregateOutput",
+            "description": null,
+            "arguments": {
+                "Details": "{{vars.steps.Gen_Agg_Summary_Detail.data['formatted_string']}}",
+                "Summary": "{{vars.steps.Generate_aggregate_summary.data['formatted_string']}}",
+                "DestIP VirusTotal Result": "{{vars.steps.Get_Dest_IP_VT_Result.json_response}}",
+                "Host IP VirusTotal Result": "{{vars.steps.Get_Host_IP_VT_Result.json_response}}",
+                "Dest IP VirusTotal Summary": "{{vars.steps.Get_Dest_IP_VT_Result.summary}}",
+                "Host IP VirusTotal Summary": "{{vars.steps.Get_Host_IP_VT_Result.summary}}",
+                "Source IP VirusTotal Result": "{{vars.steps.Get_Source_IP_VT_Result.json_response}}",
+                "Source IP VirusTotal Summary": "{{vars.steps.Get_Source_IP_VT_Result.summary}}",
+                "Incident Target VirusTotal Result": "{{vars.steps.Get_Incident_Target_VT_Result.json_response}}",
+                "Incident Target VirusTotal Summary": "{{vars.steps.Get_Incident_Target_VT_Result.summary}}"
+            },
+            "status": null,
+            "top": "520",
+            "left": "2900",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "39322c5d-17d1-44ed-a30e-fe6c996a21cc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Host IP VT Result",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.hostIpAddr}}",
+                    "ip_type": "Host IP"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/655a45a4-6b76-466f-b84f-73f7dee68060"
+            },
+            "status": null,
+            "top": "120",
+            "left": "1480",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "51738ad0-1a67-4e5a-b603-162e0ceaa7a6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Source IP VT Result",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.srcIpAddr}}",
+                    "ip_type": "Source IP"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/655a45a4-6b76-466f-b84f-73f7dee68060"
+            },
+            "status": null,
+            "top": "320",
+            "left": "1480",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "f591cf53-df8a-4697-9018-5e38b3f80a2f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Dest IP VT Result",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.destIpAddr}}",
+                    "ip_type": "Destination IP"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/655a45a4-6b76-466f-b84f-73f7dee68060"
+            },
+            "status": null,
+            "top": "540",
+            "left": "1480",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "b44b904d-27b0-4f68-bafb-7afebce85167"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Incident Target VT Result",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "ip": "{{vars.incidentTarget}}",
+                    "ip_type": "Incident Target"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/655a45a4-6b76-466f-b84f-73f7dee68060"
+            },
+            "status": null,
+            "top": "720",
+            "left": "1480",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "b6d0abce-5cec-4dc8-a31d-fb8c7a0ed07e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Generate_aggregate_summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_Dest_IP_VT_Result and not vars.steps.Get_Host_IP_VT_Result and not vars.steps.Get_Source_IP_VT_Result and not vars.steps.Get_Incident_Target_VT_Result %}\nNo valid ip addresses available to gather reputation data\n{% else %}\n{% if vars.steps.Get_Host_IP_VT_Result %}\nVirusTotal Reputation\n{{vars.steps.Get_Host_IP_VT_Result.summary}}\n{% endif %}\n{% if vars.steps.Get_Source_IP_VT_Result %}\n{{vars.steps.Get_Source_IP_VT_Result.summary}}\n{% endif %}\n{% if vars.steps.Get_Dest_IP_VT_Result %}\n{{vars.steps.Get_Dest_IP_VT_Result.summary}}\n{% endif %}\n{% if vars.steps.Get_Incident_Target_VT_Result %}\n{{vars.steps.Get_Incident_Target_VT_Result.summary}}\n{% endif %}\n{% endif %}\n"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "520",
+            "left": "2160",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "b081d920-d98b-4adf-b962-bca6ae3a7dd4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Gen Agg Summary_Detail",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_Dest_IP_VT_Result and not vars.steps.Get_Host_IP_VT_Result and not vars.steps.Get_Source_IP_VT_Result and not vars.steps.Get_Incident_Target_VT_Result %}\nNo incident detail\n{% else %}\n{% if vars.steps.Get_Host_IP_VT_Result %}\n{{vars.steps.Get_Host_IP_VT_Result.summary_detail}}\n{% endif %}\n{% if vars.steps.Get_Source_IP_VT_Result %}\n{{vars.steps.Get_Source_IP_VT_Result.summary_detail}}\n{% endif %}\n{% if vars.steps.Get_Dest_IP_VT_Result %}\n{{vars.steps.Get_Dest_IP_VT_Result.summary_detail}}\n{% endif %}\n{% if vars.steps.Get_Incident_Target_VT_Result %}\n{{vars.steps.Get_Incident_Target_VT_Result.summary_detail}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "520",
+            "left": "2520",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "b9eba96d-7741-4c03-b08b-30b1ae0b1071"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Extract Incident and Event Data for Inspection",
+            "targetStep": "\/api\/3\/workflow_steps\/1796be48-4550-46b3-8d0e-5578a5bd9270",
+            "sourceStep": "\/api\/3\/workflow_steps\/1618d7f9-c6a8-4987-a401-5394314682ae",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a669d108-856d-4bc4-a04c-4e6dd54b98e8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Incident and Event Data for Inspection -> Gather individual IP Variables",
+            "targetStep": "\/api\/3\/workflow_steps\/d74412d2-0080-452d-a701-0cba7ae5bb8b",
+            "sourceStep": "\/api\/3\/workflow_steps\/1796be48-4550-46b3-8d0e-5578a5bd9270",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b08fcb2c-c534-4131-a346-568b07c269bd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Gather individual IP Vars -> Validate IP",
+            "targetStep": "\/api\/3\/workflow_steps\/63cdabc5-66aa-4a81-b1c8-c90901c71b54",
+            "sourceStep": "\/api\/3\/workflow_steps\/d74412d2-0080-452d-a701-0cba7ae5bb8b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "09ca2461-9cd7-479b-b3fa-ec3d132df354"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Validate IP -> If IP Valid",
+            "targetStep": "\/api\/3\/workflow_steps\/e3a65829-0f6f-4350-b7c1-a8933b42c4ca",
+            "sourceStep": "\/api\/3\/workflow_steps\/63cdabc5-66aa-4a81-b1c8-c90901c71b54",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6876f131-b2cd-4c2f-b7a3-b74b17680133"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Host IP Valid -> Set valid and extracted host IP",
+            "targetStep": "\/api\/3\/workflow_steps\/dc5beef2-9d08-4106-95b4-d2205d1173cb",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3a65829-0f6f-4350-b7c1-a8933b42c4ca",
+            "label": "Valid",
+            "isExecuted": false,
+            "uuid": "b6d42df2-5880-48dd-93af-0485d9479a84"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Gather individual IP Vars -> Validate Source IP",
+            "targetStep": "\/api\/3\/workflow_steps\/1e2dadb4-3f69-4898-bfba-16763ca59b3c",
+            "sourceStep": "\/api\/3\/workflow_steps\/d74412d2-0080-452d-a701-0cba7ae5bb8b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f959f13a-e090-40aa-84fe-d0754eba9c7d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Gather individual IP Vars -> Validate Dest IP",
+            "targetStep": "\/api\/3\/workflow_steps\/dc2e78a6-7a72-470b-a571-8d16aadd5df6",
+            "sourceStep": "\/api\/3\/workflow_steps\/d74412d2-0080-452d-a701-0cba7ae5bb8b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "42a04e0d-ae07-4938-8465-1f0d8457299e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Gather individual IP Vars -> Validate Incident Target",
+            "targetStep": "\/api\/3\/workflow_steps\/e5a72f31-4695-4726-a064-44f2ffaead40",
+            "sourceStep": "\/api\/3\/workflow_steps\/d74412d2-0080-452d-a701-0cba7ae5bb8b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "27a73744-1ed6-4b6b-b6e6-dbaa1fbdd24d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Validate Source IP -> If Source IP Valid",
+            "targetStep": "\/api\/3\/workflow_steps\/0131833b-3a63-427a-aea9-7dc046e379a9",
+            "sourceStep": "\/api\/3\/workflow_steps\/1e2dadb4-3f69-4898-bfba-16763ca59b3c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d9c54306-bca8-4b26-bef1-ee308876d4e9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Validate Dest IP -> If Dest IP Valid",
+            "targetStep": "\/api\/3\/workflow_steps\/d142dd7f-7ba1-4233-8905-400dd7d50e53",
+            "sourceStep": "\/api\/3\/workflow_steps\/dc2e78a6-7a72-470b-a571-8d16aadd5df6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4da51d79-ddd2-4b4b-a80c-b476d3cd7891"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Validate Incident Target -> If Incident Target Valid",
+            "targetStep": "\/api\/3\/workflow_steps\/95a31ac9-c4b0-4582-b6cf-dbf4743f1ed4",
+            "sourceStep": "\/api\/3\/workflow_steps\/e5a72f31-4695-4726-a064-44f2ffaead40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e1d93686-714c-4060-87f7-81ac3080f106"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Source IP Valid -> Set valid Source IP",
+            "targetStep": "\/api\/3\/workflow_steps\/e6898669-5ec7-4453-8d0b-b89e978e5abb",
+            "sourceStep": "\/api\/3\/workflow_steps\/0131833b-3a63-427a-aea9-7dc046e379a9",
+            "label": "Valid",
+            "isExecuted": false,
+            "uuid": "01ca977e-fd12-4871-916b-49f3dc45cd02"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Dest IP Valid -> Set Valid Dest IP",
+            "targetStep": "\/api\/3\/workflow_steps\/68ea83a4-64c9-4235-afc6-b87e256b8799",
+            "sourceStep": "\/api\/3\/workflow_steps\/d142dd7f-7ba1-4233-8905-400dd7d50e53",
+            "label": "Valid",
+            "isExecuted": false,
+            "uuid": "a49b0d1a-4a26-49e7-9ee3-791aa07f31b8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Incident Target Valid -> Set Valid Incident Target",
+            "targetStep": "\/api\/3\/workflow_steps\/ad61e851-b152-4b46-b291-1b8f6001a2e4",
+            "sourceStep": "\/api\/3\/workflow_steps\/95a31ac9-c4b0-4582-b6cf-dbf4743f1ed4",
+            "label": "Valid",
+            "isExecuted": false,
+            "uuid": "f313426f-7f76-4d08-ad95-f49dec8eca54"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Host IP Valid -> Set Host IP Error",
+            "targetStep": "\/api\/3\/workflow_steps\/3250c1b4-f552-42a3-8a3e-5f95efcbf870",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3a65829-0f6f-4350-b7c1-a8933b42c4ca",
+            "label": "Not Valid",
+            "isExecuted": false,
+            "uuid": "5a44262a-e048-4648-8b4b-4c09e9dedb6c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Source IP Valid -> Set Source IP Error",
+            "targetStep": "\/api\/3\/workflow_steps\/17123ef5-8e18-4c7e-b9e6-bd774a8360c1",
+            "sourceStep": "\/api\/3\/workflow_steps\/0131833b-3a63-427a-aea9-7dc046e379a9",
+            "label": "Not Valid",
+            "isExecuted": false,
+            "uuid": "524434fc-3793-491b-ad07-80e810b4cc6d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Dest IP Valid -> Set Dest IP Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f3a6fbcf-d9bf-4bac-9039-ce64d0fae604",
+            "sourceStep": "\/api\/3\/workflow_steps\/d142dd7f-7ba1-4233-8905-400dd7d50e53",
+            "label": "Not Valid",
+            "isExecuted": false,
+            "uuid": "03b18974-521f-42fe-96c1-800bcc3688b9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If Incident Target Valid -> Set IncidentTarget IP Error",
+            "targetStep": "\/api\/3\/workflow_steps\/73e295e9-6622-4b4c-8e90-70b91cdb16de",
+            "sourceStep": "\/api\/3\/workflow_steps\/95a31ac9-c4b0-4582-b6cf-dbf4743f1ed4",
+            "label": "Not Valid",
+            "isExecuted": false,
+            "uuid": "086b6d1c-7d5e-46a8-a6c2-6513f17d29ab"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set valid and extracted host IP -> Get Host IP VT Result",
+            "targetStep": "\/api\/3\/workflow_steps\/51738ad0-1a67-4e5a-b603-162e0ceaa7a6",
+            "sourceStep": "\/api\/3\/workflow_steps\/dc5beef2-9d08-4106-95b4-d2205d1173cb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "122dc1bc-3703-490e-8024-50dc446de26a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set valid Source IP -> Get Source IP VT Result",
+            "targetStep": "\/api\/3\/workflow_steps\/f591cf53-df8a-4697-9018-5e38b3f80a2f",
+            "sourceStep": "\/api\/3\/workflow_steps\/e6898669-5ec7-4453-8d0b-b89e978e5abb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3ef00e90-8bf6-4280-85ec-e0d0db7e198c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Valid Dest IP -> Get Dest IP VT Result",
+            "targetStep": "\/api\/3\/workflow_steps\/b44b904d-27b0-4f68-bafb-7afebce85167",
+            "sourceStep": "\/api\/3\/workflow_steps\/68ea83a4-64c9-4235-afc6-b87e256b8799",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e8fdbfbb-ad55-42bc-ad88-3317d365f9a3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Valid Incident Target -> Get Incident Target VT Result",
+            "targetStep": "\/api\/3\/workflow_steps\/b6d0abce-5cec-4dc8-a31d-fb8c7a0ed07e",
+            "sourceStep": "\/api\/3\/workflow_steps\/ad61e851-b152-4b46-b291-1b8f6001a2e4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "36c27d57-b8ab-4aa0-b9e3-8d6da79e4a91"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Host IP VT Result -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/51738ad0-1a67-4e5a-b603-162e0ceaa7a6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e937fbde-9963-41b9-834b-66d0852a09e7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Source IP VT Result -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/f591cf53-df8a-4697-9018-5e38b3f80a2f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9a6b7c95-62d8-43f3-89b2-d29099e63e51"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Incident Target VT Result -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/b6d0abce-5cec-4dc8-a31d-fb8c7a0ed07e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "86523e1d-782b-4295-bc72-804463ee9373"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Dest IP VT Result -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/b44b904d-27b0-4f68-bafb-7afebce85167",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "06c32bea-8042-4623-9f4e-dbbdf74881dc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Generate_aggregate_summary -> Gen Agg Summary_Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/b9eba96d-7741-4c03-b08b-30b1ae0b1071",
+            "sourceStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c71a4b8f-7e1b-4a4d-ae59-1965594b03d8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Gen Agg Summary_Detail -> AggregateOutput",
+            "targetStep": "\/api\/3\/workflow_steps\/39322c5d-17d1-44ed-a30e-fe6c996a21cc",
+            "sourceStep": "\/api\/3\/workflow_steps\/b9eba96d-7741-4c03-b08b-30b1ae0b1071",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "894ac52b-b825-4543-9b0c-f13c812f7d9f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Dest IP Error -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/f3a6fbcf-d9bf-4bac-9039-ce64d0fae604",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "af0c9593-ff9d-4931-ad18-41783f2c6346"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Source IP Error -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/17123ef5-8e18-4c7e-b9e6-bd774a8360c1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7eaf9536-9c97-4650-a21d-2bdc08d1853d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Host IP Error -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/3250c1b4-f552-42a3-8a3e-5f95efcbf870",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "217ec22f-793d-4f6f-945e-9b0c5ade0f5b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set IncidentTarget IP Error -> Generate_aggregate_summary",
+            "targetStep": "\/api\/3\/workflow_steps\/b081d920-d98b-4adf-b962-bca6ae3a7dd4",
+            "sourceStep": "\/api\/3\/workflow_steps\/73e295e9-6622-4b4c-8e90-70b91cdb16de",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5fdeac3a-5882-4baa-a3ad-3a5cee17c7c2"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "dcd2353a-2e9e-45cf-a0b4-b0083e445e51",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM"
+    ]
+}

@@ -1,0 +1,746 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-get-url-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "FortiSIEM get URL reputation on attributes in an event or incident",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/51afe0d3-5789-43cc-a6ad-65cfffa658d9",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "fsiem_api_get_url_reputation",
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "api_body": "{{vars.request.data}}"
+                        }
+                    }
+                },
+                "authentication_methods": [
+                    ""
+                ]
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/df26c7a2-4166-4ca5-91e5-548e24c01b5f",
+            "uuid": "51afe0d3-5789-43cc-a6ad-65cfffa658d9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract json",
+            "description": null,
+            "arguments": {
+                "data": "{{vars.input.params['api_body']}}"
+            },
+            "status": null,
+            "top": "40",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "194003dc-9a01-4883-ae63-bc94bb329ae3"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract Vars from Data",
+            "description": null,
+            "arguments": {
+                "uriStem": "{{vars.data.uriStem}}",
+                "childObjUrl": "{{vars.data.childObjUrl}}",
+                "downloadURL": "{{vars.data.downloadURL}}",
+                "hxDirectURL": "{{vars.data.hxDirectURL}}",
+                "parentObjUrl": "{{vars.data.parentObjUrl}}",
+                "incidentDetail": "{{vars.data.incidentDetail}}",
+                "incidentTarget": "{{vars.data.incidentTarget}}"
+            },
+            "status": null,
+            "top": "60",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "61da59c8-52ef-4a16-93f7-d0fdceca7f40"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get uriStem URL reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.uriStem}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "460",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "b76127fa-1498-4e60-8ceb-c6ccc42c4943"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If uriStem exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "No Var",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.uriStem is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/b76127fa-1498-4e60-8ceb-c6ccc42c4943",
+                        "step_name": "Get uriStem URL reputation"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.uriStem == \"\" }}",
+                        "step_name": "General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "280",
+            "left": "440",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "4bd19b1a-eef7-4d38-9f4d-d279e42ace39"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If incidentDetail exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "No var",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.incidentDetail is not defined }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "No Var",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.incidentDetail is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "No Var",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.incidentDetail == \"\" }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/950e7d98-429c-459d-8990-c84b61368790",
+                        "step_name": "Extract via regex"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "160",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "1dd449ba-d86c-42f4-8ab2-8a280c8fb54d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get incidentDetail reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.incidentDetailExtracted}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "82da6de0-97e4-4606-b7ad-b7d299f0fd18"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output",
+            "description": null,
+            "arguments": {
+                "Details": "{{vars.steps.Set_Detail.data['formatted_string']}}",
+                "Summary": "{{vars.steps.Create_Aggregate_Summary.data['formatted_string']}}",
+                "uriStemOutput": "{{vars.steps.Get_uriStem_URL_reputation}}",
+                "childObjUrlOutput": "{{vars.steps.Get_childObjUrl_URL_rep}}",
+                "downloadURLOutput": "{{vars.steps.Get_Download_URL_Rep}}",
+                "hxDirectURLOutput": "{{vars.steps.Get_hxDirectURL_URL_Rep}}",
+                "parentObjUrlOutput": "{{vars.steps.Get_parentObjUrl_URL_Rep}}",
+                "incidentTargetOutput": "{{vars.steps.Get_incidentDetail_reputation}}"
+            },
+            "status": null,
+            "top": "1040",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "7fee6148-c87e-4ec0-900d-d5b6a69cc923"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Aggregate Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_uriStem_URL_reputation.summary and not vars.steps.Get_incidentDetail_reputation.summary and not vars.steps.Get_Download_URL_Rep.summary and not vars.steps.Get_parentObjUrl_URL_Rep.summary and not vars.steps.Get_childObjUrl_URL_rep.summary and not vars.steps.Get_hxDirectURL_URL_Rep.summary %}\nNo valid URL attributes found to generate reputation data\n{% else %}\n{% if vars.steps.Get_uriStem_URL_reputation.summary %}\nuriStem:{{vars.steps.Get_uriStem_URL_reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_incidentDetail_reputation.summary %}\nincidentDetail:{{vars.steps.Get_incidentDetail_reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_Download_URL_Rep.summary %}\ndownloadURL:{{vars.steps.Get_Download_URL_Rep.summary}}\n{% endif %}\n{% if vars.steps.Get_parentObjUrl_URL_Rep.summary %}\nparentObjUrl:{{vars.steps.Get_parentObjUrl_URL_Rep.summary}}\n{% endif %}\n{% if vars.steps.Get_childObjUrl_URL_rep.summary %}\nchildObjUrl:{{vars.steps.Get_childObjUrl_URL_rep.summary}}\n{% endif %}\n{% if vars.steps.Get_hxDirectURL_URL_Rep.summary %}\nhxDirectURL:{{vars.steps.Get_hxDirectURL_URL_Rep.summary}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "680",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "7a9a6b45-520f-4c54-a255-784e157431af"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If download URL exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Doesnt exist",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.downloadURL is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/1fb74b92-36c9-4f32-8814-eaf0fb8b9203",
+                        "step_name": "Get Download URL Rep"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.downloadURL == \"\" }}",
+                        "step_name": "General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "280",
+            "left": "1080",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "0ca4694e-b27d-49ab-b5a0-9c2444dfbc17"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "if parentObjUrl exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Doesnt exist",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.parentObjUrl is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/64e91157-5a1c-4f47-8876-e0a02570e52a",
+                        "step_name": "Get parentObjUrl URL Rep"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.parentObjUrl == \"\" }}",
+                        "step_name": "General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "280",
+            "left": "1380",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "49293009-5aee-4f4b-8f4b-119c5534ec9f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "if childObjUrl exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Doesnt exist",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.childObjUrl is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/c972216d-5950-426f-9fdc-f87ca68a6539",
+                        "step_name": "Get childObjUrl URL rep"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.childObjUrl == \"\" }}",
+                        "step_name": "General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "280",
+            "left": "1660",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "0f9f1c1c-1fc5-4126-b199-0a8dc34c07f8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "if hxDirectURL exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Doesnt exist",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.hxDirectURL is none }}",
+                        "step_name": "General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/f951bdeb-171e-4b07-bad1-f91c40eb0d3f",
+                        "step_name": "Get hxDirectURL URL Rep"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+                        "condition": "{{ vars.hxDirectURL == \"\" }}",
+                        "step_name": "General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "280",
+            "left": "1960",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "923f2492-521e-4434-b02b-14ed16c860ed"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "General Error",
+            "description": null,
+            "arguments": {
+                "error": "error occurred"
+            },
+            "status": null,
+            "top": "60",
+            "left": "2480",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Download URL Rep",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.downloadURL}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "1080",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "1fb74b92-36c9-4f32-8814-eaf0fb8b9203"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get parentObjUrl URL Rep",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.parentObjUrl}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "1380",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "64e91157-5a1c-4f47-8876-e0a02570e52a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get childObjUrl URL rep",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.childObjUrl}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "1660",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "c972216d-5950-426f-9fdc-f87ca68a6539"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hxDirectURL URL Rep",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.hxDirectURL}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/4aff7f09-a406-4d3e-85d4-a41904b92e6d"
+            },
+            "status": null,
+            "top": "460",
+            "left": "1960",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "f951bdeb-171e-4b07-bad1-f91c40eb0d3f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Detail",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_uriStem_URL_reputation.detail and not vars.steps.Get_incidentDetail_reputation.detail and not vars.steps.Get_Download_URL_Rep.detail and not vars.steps.Get_parentObjUrl_URL_Rep.detail and not vars.steps.Get_childObjUrl_URL_rep.detail and not vars.steps.Get_hxDirectURL_URL_Rep.detail %}\nNo detail available\n{% else %}\n{% if vars.steps.Get_uriStem_URL_reputation.detail %}\nuriStem URL Summary\n{{vars.steps.Get_uriStem_URL_reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_incidentDetail_reputation.detail %}\nincidentTarget URL Summary\n{{vars.steps.Get_incidentDetail_reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_Download_URL_Rep.detail %}\ndownloadURL URL Summary\n{{vars.steps.Get_Download_URL_Rep.detail}}\n{% endif %}\n{% if vars.steps.Get_parentObjUrl_URL_Rep.detail %}\nparentObjUrl URL Summary\n{{vars.steps.Get_parentObjUrl_URL_Rep.detail}}\n{% endif %}\n{% if vars.steps.Get_childObjUrl_URL_rep.detail %}\nchildObjUrl URL Summary\n{{vars.steps.Get_childObjUrl_URL_rep.detail}}\n{% endif %}\n{% if vars.steps.Get_hxDirectURL_URL_Rep.detail %}\nhxDirectURL URL Summary\n{{vars.steps.Get_hxDirectURL_URL_Rep.detail}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "df240327-cfef-4a07-af62-f56db93ef95d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract via regex",
+            "description": null,
+            "arguments": {
+                "incidentDetailExtracted": "{{vars.incidentDetail| regex_search(\"(?:(?<=uriStem:)|(?<=childObjUrl:)|(?<=downloadURL:)|(?<=hxDirectURL:)|(?<=parentObjUrl:))[^,]+\")}}"
+            },
+            "status": null,
+            "top": "340",
+            "left": "760",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "950e7d98-429c-459d-8990-c84b61368790"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Extract json",
+            "targetStep": "\/api\/3\/workflow_steps\/194003dc-9a01-4883-ae63-bc94bb329ae3",
+            "sourceStep": "\/api\/3\/workflow_steps\/51afe0d3-5789-43cc-a6ad-65cfffa658d9",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "aeb929c2-7dd6-4a7f-a93c-ace8fdad162a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract json -> Extract Vars from Data",
+            "targetStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "sourceStep": "\/api\/3\/workflow_steps\/194003dc-9a01-4883-ae63-bc94bb329ae3",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d90f6357-4f70-472d-9399-fd6ad5bcf514"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> If uriStem exists",
+            "targetStep": "\/api\/3\/workflow_steps\/4bd19b1a-eef7-4d38-9f4d-d279e42ace39",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2acedf32-a01f-4429-82fb-b2fb4bb78fff"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> If incidentTarget exists",
+            "targetStep": "\/api\/3\/workflow_steps\/1dd449ba-d86c-42f4-8ab2-8a280c8fb54d",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "92138f5f-4c26-42f9-8aba-8adf36a51303"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If uriStem exists -> Get uriStem URL reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/b76127fa-1498-4e60-8ceb-c6ccc42c4943",
+            "sourceStep": "\/api\/3\/workflow_steps\/4bd19b1a-eef7-4d38-9f4d-d279e42ace39",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "3f5ed126-52c4-45d6-8311-868f8eb48cae"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get uriStem URL reputation -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/b76127fa-1498-4e60-8ceb-c6ccc42c4943",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3279ed9d-4429-4a2d-8636-1626ee291b1c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentTarget reputation -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/82da6de0-97e4-4606-b7ad-b7d299f0fd18",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8c3ad5ba-9bb2-4198-93d6-d3a69cf587d9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> If download URL exists",
+            "targetStep": "\/api\/3\/workflow_steps\/0ca4694e-b27d-49ab-b5a0-9c2444dfbc17",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5172517d-5f97-46b6-8b32-ef74afd42cf1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> if parentObjUrl exists",
+            "targetStep": "\/api\/3\/workflow_steps\/49293009-5aee-4f4b-8f4b-119c5534ec9f",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "33eb9717-a054-41df-af2c-402ff80421a2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> if childObjUrl exists",
+            "targetStep": "\/api\/3\/workflow_steps\/0f9f1c1c-1fc5-4126-b199-0a8dc34c07f8",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "1c68a5fd-77b9-40d8-b8a7-e9eaff1465e1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Vars from Data -> if hxDirectURL exists",
+            "targetStep": "\/api\/3\/workflow_steps\/923f2492-521e-4434-b02b-14ed16c860ed",
+            "sourceStep": "\/api\/3\/workflow_steps\/61da59c8-52ef-4a16-93f7-d0fdceca7f40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "bdb8a9d9-482b-4976-b23f-a03d5c88bda1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If download URL exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/0ca4694e-b27d-49ab-b5a0-9c2444dfbc17",
+            "label": "Doesnt exist",
+            "isExecuted": false,
+            "uuid": "a4f9f89b-dd42-42c7-a0a1-ff5481ecb8fd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Download URL Rep -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/1fb74b92-36c9-4f32-8814-eaf0fb8b9203",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c097d416-8792-4b59-9ab9-a42220f73b04"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if parentObjUrl exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/49293009-5aee-4f4b-8f4b-119c5534ec9f",
+            "label": "Doesnt exist",
+            "isExecuted": false,
+            "uuid": "2109e8f2-ab05-4682-80ca-170519a3e4b8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If download URL exists -> Get Download URL Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/1fb74b92-36c9-4f32-8814-eaf0fb8b9203",
+            "sourceStep": "\/api\/3\/workflow_steps\/0ca4694e-b27d-49ab-b5a0-9c2444dfbc17",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "3650b051-78f3-4e27-99bc-5a38a6fb4bd2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if parentObjUrl exists -> Get parentObjUrl URL Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/64e91157-5a1c-4f47-8876-e0a02570e52a",
+            "sourceStep": "\/api\/3\/workflow_steps\/49293009-5aee-4f4b-8f4b-119c5534ec9f",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "d25d2a05-714d-4750-bf1b-a9413b89b1b7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if childObjUrl exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/0f9f1c1c-1fc5-4126-b199-0a8dc34c07f8",
+            "label": "Doesnt exist",
+            "isExecuted": false,
+            "uuid": "a5acaf76-4170-4a52-bf12-5f29eb255475"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if childObjUrl exists -> Get childObjUrl URL rep",
+            "targetStep": "\/api\/3\/workflow_steps\/c972216d-5950-426f-9fdc-f87ca68a6539",
+            "sourceStep": "\/api\/3\/workflow_steps\/0f9f1c1c-1fc5-4126-b199-0a8dc34c07f8",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "11fcdeec-5c90-4b68-91e2-1c422023828c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if hxDirectURL exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/923f2492-521e-4434-b02b-14ed16c860ed",
+            "label": "Doesnt exist",
+            "isExecuted": false,
+            "uuid": "bae08496-05bd-469c-a52a-7f65b3836547"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if hxDirectURL exists -> Get hxDirectURL URL Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/f951bdeb-171e-4b07-bad1-f91c40eb0d3f",
+            "sourceStep": "\/api\/3\/workflow_steps\/923f2492-521e-4434-b02b-14ed16c860ed",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "989e7bcd-faf9-4b4f-9263-65b5e1baa67b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get parentObjUrl URL Rep -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/64e91157-5a1c-4f47-8876-e0a02570e52a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "92260dfd-5c75-480e-bf27-da645575a868"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get childObjUrl URL rep -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/c972216d-5950-426f-9fdc-f87ca68a6539",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c9af2be0-ffdc-4dc9-bc4d-3e8e5f7a1e45"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hxDirectURL URL Rep -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/f951bdeb-171e-4b07-bad1-f91c40eb0d3f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2dcfb4d6-f823-4bc1-b43d-ead3709f590d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/1dd449ba-d86c-42f4-8ab2-8a280c8fb54d",
+            "label": "No var",
+            "isExecuted": false,
+            "uuid": "943afb60-160a-409a-ba5e-4b829822efe0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If uriStem exists -> General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "sourceStep": "\/api\/3\/workflow_steps\/4bd19b1a-eef7-4d38-9f4d-d279e42ace39",
+            "label": "No Var",
+            "isExecuted": false,
+            "uuid": "fc9787a9-75d2-4cb4-b83a-a90a377ace17"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "General Error -> Create Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "sourceStep": "\/api\/3\/workflow_steps\/f86ae1e7-7ed0-48fc-aa54-ba94d12c9fda",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9bcf4694-4ab7-4098-a29b-eed3b579eb65"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Aggregate Summary -> Set Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/df240327-cfef-4a07-af62-f56db93ef95d",
+            "sourceStep": "\/api\/3\/workflow_steps\/7a9a6b45-520f-4c54-a255-784e157431af",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a7d21bc6-1e6f-4afe-92e2-dcdce4242252"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Detail -> Output",
+            "targetStep": "\/api\/3\/workflow_steps\/7fee6148-c87e-4ec0-900d-d5b6a69cc923",
+            "sourceStep": "\/api\/3\/workflow_steps\/df240327-cfef-4a07-af62-f56db93ef95d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9de8f967-bd28-4281-9b7d-946b51856a87"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget exists -> Extract via regex",
+            "targetStep": "\/api\/3\/workflow_steps\/950e7d98-429c-459d-8990-c84b61368790",
+            "sourceStep": "\/api\/3\/workflow_steps\/1dd449ba-d86c-42f4-8ab2-8a280c8fb54d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d5e6ad3f-dc4f-480e-a2ee-c243de42f5c4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract via regex -> Get incidentTarget reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/82da6de0-97e4-4606-b7ad-b7d299f0fd18",
+            "sourceStep": "\/api\/3\/workflow_steps\/950e7d98-429c-459d-8990-c84b61368790",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "98603855-1d80-4982-988c-fbe17c0c0351"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "fe5a5cc5-b49f-490c-a1d9-5aca8b3d1bd1",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM"
+    ]
+}

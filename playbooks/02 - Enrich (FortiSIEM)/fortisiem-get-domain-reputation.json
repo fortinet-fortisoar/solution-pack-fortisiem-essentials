@@ -1,0 +1,1121 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-get-domain-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "FortiSIEM get domain reputation on attributes in an event or incident",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/dfb6401d-6e08-4919-89fb-848e1116fd1e",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "fsiem_api_get_domain_reputation",
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "domain": "{{ vars.domain }}",
+                            "api_body": "{{vars.request.data}}"
+                        }
+                    }
+                },
+                "authentication_methods": [
+                    ""
+                ]
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/df26c7a2-4166-4ca5-91e5-548e24c01b5f",
+            "uuid": "dfb6401d-6e08-4919-89fb-848e1116fd1e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract JSON event or incident",
+            "description": null,
+            "arguments": {
+                "data": "{{vars.input.params['api_body']}}"
+            },
+            "status": null,
+            "top": "160",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "e94c0224-504f-460f-b37a-3a58f50836f1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set variables",
+            "description": null,
+            "arguments": {
+                "domain": "{{vars.data.domain}}",
+                "srcName": "{{vars.data.srcName}}",
+                "destName": "{{vars.data.destName}}",
+                "srcDomain": "{{vars.data.srcDomain}}",
+                "destDomain": "{{vars.data.destDomain}}",
+                "mailDomain": "{{vars.data.mailDomain}}",
+                "incidentSrc": "{{vars.data.incidentSrc}}",
+                "targetDomain": "{{vars.data.targetDomain}}",
+                "incidentTarget": "{{vars.data.incidentTarget}}"
+            },
+            "status": null,
+            "top": "440",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "eb26555e-d8ae-4fe7-9aee-0a06f97a92d1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get destDomain Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.destDomain}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "40",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "928094bb-7130-4d68-b719-3a20f1391efe"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get srcName Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.srcName}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "120",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "1ab10a3b-e2d0-4434-8d84-d66b042fb6dd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get destName Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.destName}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "200",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "fbeb8e68-cff0-4c09-8230-67a1972a6def"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get srcDomain Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.srcDomain}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "280",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "0575e94f-e45b-4534-ba07-6859ef0a3b00"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get domain Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.domain}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "360",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "d6e86de6-713e-4860-b615-cacdae5cf724"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get mailDomain Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.mailDomain}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "440",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "e797c201-f055-478a-8985-558623158ef7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get incidentSrc Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.incidentSourceRegex}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "620",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "2cd5f1bb-66ea-4139-9faf-d0f4d3d15861"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get targetDomain Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.targetDomain}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "520",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "490337be-d41b-4a76-b156-a45cbde69df4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get incidentTarget Reputation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "indicator_value": "{{vars.incidentTargetRegex}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/402d1ab5-12b9-4528-aaf2-24178e363275"
+            },
+            "status": null,
+            "top": "720",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "b6e94456-222c-483f-9792-8a8d94c7bf1b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Generate Aggregate Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_destDomain_Reputation.summary and not vars.steps.Get_srcName_Reputation.summary and not vars.steps.Get_destName_Reputation.summary and not vars.steps.Get_srcDomain_Reputation.summary and not vars.steps.Get_domain_Reputation.summary and not vars.steps.Get_mailDomain_Reputation.summary and not vars.steps.Get_incidentSrc_Reputation.summary and not vars.steps.Get_targetDomain_Reputation.summary and not vars.steps.Get_incidentTarget_Reputation.summary %}\nNo valid domain attributes could be found to generate reputation\n{% else %}\n{% if vars.steps.Get_destDomain_Reputation.summary %}destDomain:{{vars.steps.Get_destDomain_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_srcName_Reputation.summary %}srcName:{{vars.steps.Get_srcName_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_destName_Reputation.summary %}destName:{{vars.steps.Get_destName_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_srcDomain_Reputation.summary %}srcDomain:{{vars.steps.Get_srcDomain_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_domain_Reputation.summary %}domain:{{vars.steps.Get_domain_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_mailDomain_Reputation.summary %}mailDomain:{{vars.steps.Get_mailDomain_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_incidentSrc_Reputation.summary %}incidentSrc:{{vars.steps.Get_incidentSrc_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_targetDomain_Reputation.summary %}targetDomain:{{vars.steps.Get_targetDomain_Reputation.summary}}\n{% endif %}\n{% if vars.steps.Get_incidentTarget_Reputation.summary %}incidentTarget:{{vars.steps.Get_incidentTarget_Reputation.summary}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "440",
+            "left": "2020",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "0a937f09-6daa-4713-a411-c25ff338dc14"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Final Output",
+            "description": null,
+            "arguments": {
+                "Details": "{{vars.steps.Set_Detail.data['formatted_string']}}",
+                "Summary": "{{vars.steps.Generate_Aggregate_Summary.data['formatted_string']}}",
+                "domainResult": "{{vars.steps.Get_domain_Reputation}}",
+                "srcNameResult": "{{vars.steps.Get_srcName_Reputation}}",
+                "destNameResult": "{{vars.steps.Get_destName_Reputation}}",
+                "srcDomainResult": "{{vars.steps.Get_srcDomain_Reputation}}",
+                "destDomainResult": "{{vars.steps.Get_destDomain_Reputation}}",
+                "mailDomainResult": "{{vars.steps.Get_mailDomain_Reputation}}",
+                "incidentSrcResult": "{{vars.steps.Get_incidentSrc_Reputation}}",
+                "targetDomainResult": "{{vars.steps.Get_targetDomain_Reputation}}",
+                "incidentTargetResult": "{{vars.steps.Get_incidentTarget_Reputation}}"
+            },
+            "status": null,
+            "top": "440",
+            "left": "2700",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "976ded47-5ea2-4049-8078-e6c41cd13fe8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If destDomain defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.destDomain is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.destDomain == \"\" or vars.destDomain is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/928094bb-7130-4d68-b719-3a20f1391efe",
+                        "step_name": "Get destDomain Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "60",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "4dd92743-e5fe-4449-a1a0-d3ed0802ed0e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set General Error",
+            "description": null,
+            "arguments": {
+                "Error": "Doesn't Exist"
+            },
+            "status": null,
+            "top": "900",
+            "left": "1600",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "0d028b2e-a027-4a1c-b8a3-75e357d64016"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "if srcName defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.srcName is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.srcName == \"\" }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/1ab10a3b-e2d0-4434-8d84-d66b042fb6dd",
+                        "step_name": "Get srcName Reputation"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.srcName is none }}",
+                        "step_name": "Set General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "140",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "30c0c247-0c38-4c55-84d4-51269aed36d4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If destName defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.destName is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.destName == \"\" }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/fbeb8e68-cff0-4c09-8230-67a1972a6def",
+                        "step_name": "Get destName Reputation"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.destName is none }}",
+                        "step_name": "Set General Error"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "220",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "e210c510-4e28-456f-95c1-284d57f0e5d7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If srcDomain defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.srcDomain is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.srcDomain == \"\" or vars.srcDomain is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/0575e94f-e45b-4534-ba07-6859ef0a3b00",
+                        "step_name": "Get srcDomain Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "300",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "dbe9ae2d-57ed-498f-bc60-599536a45d6c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If domain defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.domain is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.domain == \"\" or vars.domain is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/d6e86de6-713e-4860-b615-cacdae5cf724",
+                        "step_name": "Get domain Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "380",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "726b96f4-7c42-4863-86b9-4ba7ac412477"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If mailDomain defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.mailDomain is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.mailDomain == \"\" or vars.mailDomain is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/e797c201-f055-478a-8985-558623158ef7",
+                        "step_name": "Get mailDomain Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "460",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "73b75eed-b398-41bd-8400-2e8c072cd32b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If incidentSrc defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentSrc is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentSrc == \"\" or vars.incidentSrc is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/1f4e67fc-a983-4d40-8e10-c0330c3a6018",
+                        "step_name": "Extract Incident Src Regex"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "640",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "458cae92-aede-4d6b-97e6-036c2ad69cc8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If targetDomain defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.targetDomain is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.targetDomain == \"\" or vars.targetDomain is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Get Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/490337be-d41b-4a76-b156-a45cbde69df4",
+                        "step_name": "Get targetDomain Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "540",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "d4d24463-b4a6-48c1-b5a8-5bf4da939510"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If incidentTarget defined",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentTarget is not defined }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "option": "Error",
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentTarget == \"\" or vars.incidentTarget is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/370fba4c-dfde-4f4c-ab78-1e9f38d80720",
+                        "step_name": "Extract incident target regex"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "740",
+            "left": "420",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "3c64a200-a68f-4704-951e-36e2c11fd48f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Detail",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_destDomain_Reputation.detail and not vars.steps.Get_srcName_Reputation.detail and not vars.steps.Get_destName_Reputation.detail and not vars.steps.Get_srcDomain_Reputation.detail and not vars.steps.Get_domain_Reputation.detail and not vars.steps.Get_mailDomain_Reputation.detail and not vars.steps.Get_incidentSrc_Reputation.detail and not vars.steps.Get_targetDomain_Reputation.detail and not vars.steps.Get_incidentTarget_Reputation.detail %}\nNo detail available\n{% else %}\n{% if vars.steps.Get_destDomain_Reputation.detail %}destDomain:{{vars.steps.Get_destDomain_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_srcName_Reputation.detail %}srcName:{{vars.steps.Get_srcName_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_destName_Reputation.detail %}destName:{{vars.steps.Get_destName_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_srcDomain_Reputation.detail %}srcDomain:{{vars.steps.Get_srcDomain_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_domain_Reputation.detail %}\ndomain:{{vars.steps.Get_domain_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_mailDomain_Reputation.detail %}mailDomain:{{vars.steps.Get_mailDomain_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_incidentSrc_Reputation.detail %}incidentSrc:{{vars.steps.Get_incidentSrc_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_targetDomain_Reputation.detail %}targetDomain:{{vars.steps.Get_targetDomain_Reputation.detail}}\n{% endif %}\n{% if vars.steps.Get_incidentTarget_Reputation.detail %}incidentTarget:{{vars.steps.Get_incidentTarget_Reputation.detail}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "440",
+            "left": "2340",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "4c5de8c8-12d4-4b18-a9ff-a8d93406b2a9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract Incident Src Regex",
+            "description": null,
+            "arguments": {
+                "incidentSourceRegex": "{{vars.incidentSrc| regex_search(\"(?:(?<=domain:)|(?<=srcName:)|(?<=destName:)|(?<=srcDomain:)|(?<=destDomain:)|(?<=mailDomain:)|(?<=targetDomain:))[^,]+\")}}"
+            },
+            "status": null,
+            "top": "640",
+            "left": "700",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "1f4e67fc-a983-4d40-8e10-c0330c3a6018"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract incident target regex",
+            "description": null,
+            "arguments": {
+                "incidentTargetRegex": "{{vars.incidentTarget| regex_search(\"(?:(?<=domain:)|(?<=srcName:)|(?<=destName:)|(?<=srcDomain:)|(?<=destDomain:)|(?<=mailDomain:)|(?<=targetDomain:))[^,]+\")}}"
+            },
+            "status": null,
+            "top": "740",
+            "left": "720",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "370fba4c-dfde-4f4c-ab78-1e9f38d80720"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If incidentSrc Result not null",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentSourceRegex == \"\" or vars.incidentSourceRegex is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/2cd5f1bb-66ea-4139-9faf-d0f4d3d15861",
+                        "step_name": "Get incidentSrc Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "640",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "5b66630b-131a-4fc6-8387-4a0f63703260"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If incidentTarget Result not null",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+                        "condition": "{{ vars.incidentTargetRegex == \"\" or vars.incidentTargetRegex is none }}",
+                        "step_name": "Set General Error"
+                    },
+                    {
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/b6e94456-222c-483f-9792-8a8d94c7bf1b",
+                        "step_name": "Get incidentTarget Reputation"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "740",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "81b71aee-a7f2-48c0-be48-dc91dea6c71d"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Extract JSON event or incident",
+            "targetStep": "\/api\/3\/workflow_steps\/e94c0224-504f-460f-b37a-3a58f50836f1",
+            "sourceStep": "\/api\/3\/workflow_steps\/dfb6401d-6e08-4919-89fb-848e1116fd1e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ad4f87af-e3e2-4b03-9a03-e47d093a0c0f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract JSON event or incident -> Set variables",
+            "targetStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "sourceStep": "\/api\/3\/workflow_steps\/e94c0224-504f-460f-b37a-3a58f50836f1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "1e58dfe3-2dc9-49c8-b4c5-89f422138184"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get destDomain Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/928094bb-7130-4d68-b719-3a20f1391efe",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8fcf1fed-974f-4aec-a70d-83b5713b398f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get srcName Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/1ab10a3b-e2d0-4434-8d84-d66b042fb6dd",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e457b8a3-68d8-4acb-8b58-782a77efe626"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get destName Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/fbeb8e68-cff0-4c09-8230-67a1972a6def",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5535ebe3-ed27-4f78-a2ab-76eae7f3086a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get srcDomain Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/0575e94f-e45b-4534-ba07-6859ef0a3b00",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "669fdf91-a2f9-4015-a9f1-1f29afdcf9a3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get domain Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/d6e86de6-713e-4860-b615-cacdae5cf724",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b5962a6f-230c-4f52-a8c8-0b40294c8b59"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get mailDomain Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/e797c201-f055-478a-8985-558623158ef7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5c495970-5e57-403e-834f-149f5a3a842f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentSrc Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/2cd5f1bb-66ea-4139-9faf-d0f4d3d15861",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "23d3a38b-5bc2-432c-aae8-bed5c5f746d8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get targetDomain Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/490337be-d41b-4a76-b156-a45cbde69df4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c24c31fa-096b-4146-9c93-9d6b5eba19a8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentTarget Reputation -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/b6e94456-222c-483f-9792-8a8d94c7bf1b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "050548ab-f476-45f2-b97c-82cc8de57955"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If destDomain defined",
+            "targetStep": "\/api\/3\/workflow_steps\/4dd92743-e5fe-4449-a1a0-d3ed0802ed0e",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8b3a4f03-fe9d-4bf4-88b5-e1b531c34cc2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> if srcName defined",
+            "targetStep": "\/api\/3\/workflow_steps\/30c0c247-0c38-4c55-84d4-51269aed36d4",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9131a387-7e6a-4f1d-8e5f-18d0e8fed1d2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If destDomain defined -> Get destDomain Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/928094bb-7130-4d68-b719-3a20f1391efe",
+            "sourceStep": "\/api\/3\/workflow_steps\/4dd92743-e5fe-4449-a1a0-d3ed0802ed0e",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "e627288b-b6c3-4e20-bacc-ff9fd3437a63"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If destDomain defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/4dd92743-e5fe-4449-a1a0-d3ed0802ed0e",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "23fe9482-1179-422b-9819-684a7859e6b6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if srcName defined -> Get srcName Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/1ab10a3b-e2d0-4434-8d84-d66b042fb6dd",
+            "sourceStep": "\/api\/3\/workflow_steps\/30c0c247-0c38-4c55-84d4-51269aed36d4",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "375c2851-af22-405b-9421-493568d70773"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "if srcName defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/30c0c247-0c38-4c55-84d4-51269aed36d4",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "dfd45c75-205b-4133-84e1-2e2deac88249"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If destName defined",
+            "targetStep": "\/api\/3\/workflow_steps\/e210c510-4e28-456f-95c1-284d57f0e5d7",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "bf889b99-cb0c-4fd1-9400-e8550d6636ac"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If destName defined -> Get destName Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/fbeb8e68-cff0-4c09-8230-67a1972a6def",
+            "sourceStep": "\/api\/3\/workflow_steps\/e210c510-4e28-456f-95c1-284d57f0e5d7",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "ce73dee2-2610-42ec-8e4d-0102c55795ec"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If destName defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/e210c510-4e28-456f-95c1-284d57f0e5d7",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "0fa6dd7f-b75f-4fad-910b-9128bda587df"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If srcDomain defined",
+            "targetStep": "\/api\/3\/workflow_steps\/dbe9ae2d-57ed-498f-bc60-599536a45d6c",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6cac9983-b2fc-4dc4-a22e-c995ba89bda9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If domain defined",
+            "targetStep": "\/api\/3\/workflow_steps\/726b96f4-7c42-4863-86b9-4ba7ac412477",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "483899e1-bf87-4921-99a0-a3616f1e7d20"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If mailDomain defined",
+            "targetStep": "\/api\/3\/workflow_steps\/73b75eed-b398-41bd-8400-2e8c072cd32b",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e50e424d-a6d8-4652-88d4-e9977e3795b3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If incidentSrc defined",
+            "targetStep": "\/api\/3\/workflow_steps\/458cae92-aede-4d6b-97e6-036c2ad69cc8",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ab1e454f-9123-405d-8c5c-b982570d165d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If targetDomain defined",
+            "targetStep": "\/api\/3\/workflow_steps\/d4d24463-b4a6-48c1-b5a8-5bf4da939510",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "db24bce4-fde5-4da5-b4f9-fd1b57330b92"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set variables -> If incidentTarget defined",
+            "targetStep": "\/api\/3\/workflow_steps\/3c64a200-a68f-4704-951e-36e2c11fd48f",
+            "sourceStep": "\/api\/3\/workflow_steps\/eb26555e-d8ae-4fe7-9aee-0a06f97a92d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a2b9349e-3512-455f-903c-65b18baa5358"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If srcDomain defined -> Get srcDomain Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/0575e94f-e45b-4534-ba07-6859ef0a3b00",
+            "sourceStep": "\/api\/3\/workflow_steps\/dbe9ae2d-57ed-498f-bc60-599536a45d6c",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "992562ee-62e2-4c4f-b1ba-1eaf19122f8c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If srcDomain defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/dbe9ae2d-57ed-498f-bc60-599536a45d6c",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "010bf22a-3099-44ee-bbee-7e0863b0e13e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If domain defined -> Get domain Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/d6e86de6-713e-4860-b615-cacdae5cf724",
+            "sourceStep": "\/api\/3\/workflow_steps\/726b96f4-7c42-4863-86b9-4ba7ac412477",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "82c1f076-f8e9-44e3-a193-ccb1ac5c78cc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If domain defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/726b96f4-7c42-4863-86b9-4ba7ac412477",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "87b477ce-964e-444d-9367-f5bf30205da6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If mailDomain defined -> Get mailDomain Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/e797c201-f055-478a-8985-558623158ef7",
+            "sourceStep": "\/api\/3\/workflow_steps\/73b75eed-b398-41bd-8400-2e8c072cd32b",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "574b0f6a-9674-46ac-a56e-16ece8a106c9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If mailDomain defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/73b75eed-b398-41bd-8400-2e8c072cd32b",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "8214e8ef-34c4-4510-9a6d-b55920780536"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentSrc defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/458cae92-aede-4d6b-97e6-036c2ad69cc8",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "ba82d09f-193a-4817-b7ac-7e18a5637806"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If targetDomain defined -> Get targetDomain Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/490337be-d41b-4a76-b156-a45cbde69df4",
+            "sourceStep": "\/api\/3\/workflow_steps\/d4d24463-b4a6-48c1-b5a8-5bf4da939510",
+            "label": "Get Rep",
+            "isExecuted": false,
+            "uuid": "2f0fa8a6-b5b3-4f91-b479-a95102dcdd5f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If targetDomain defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/d4d24463-b4a6-48c1-b5a8-5bf4da939510",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "3e2e50b3-d020-4e6b-9205-57dbb9939119"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget defined -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/3c64a200-a68f-4704-951e-36e2c11fd48f",
+            "label": "Error",
+            "isExecuted": false,
+            "uuid": "6a92d0c3-35d3-4767-a49f-ec7d3507d031"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set General Error -> Generate Aggregate Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "sourceStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "852ff6a0-f6ad-4716-b207-e82865cc7f18"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Generate Aggregate Summary -> Set Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/4c5de8c8-12d4-4b18-a9ff-a8d93406b2a9",
+            "sourceStep": "\/api\/3\/workflow_steps\/0a937f09-6daa-4713-a411-c25ff338dc14",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b20b54ca-b639-42de-8b54-3d819e02fdc7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Detail -> Final Output",
+            "targetStep": "\/api\/3\/workflow_steps\/976ded47-5ea2-4049-8078-e6c41cd13fe8",
+            "sourceStep": "\/api\/3\/workflow_steps\/4c5de8c8-12d4-4b18-a9ff-a8d93406b2a9",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "68854322-7606-4fac-beb0-272cabbdd7a5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentSrc defined -> Extract Incident Src Regex",
+            "targetStep": "\/api\/3\/workflow_steps\/1f4e67fc-a983-4d40-8e10-c0330c3a6018",
+            "sourceStep": "\/api\/3\/workflow_steps\/458cae92-aede-4d6b-97e6-036c2ad69cc8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f8e130d0-cbd9-48f3-bc3a-c11f8d0a2645"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget defined -> Extract incident target regex",
+            "targetStep": "\/api\/3\/workflow_steps\/370fba4c-dfde-4f4c-ab78-1e9f38d80720",
+            "sourceStep": "\/api\/3\/workflow_steps\/3c64a200-a68f-4704-951e-36e2c11fd48f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e97ae162-e7a8-47d5-a48a-8f0f9dd13aa6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Incident Src Regex -> If incidentSrc Result not null",
+            "targetStep": "\/api\/3\/workflow_steps\/5b66630b-131a-4fc6-8387-4a0f63703260",
+            "sourceStep": "\/api\/3\/workflow_steps\/1f4e67fc-a983-4d40-8e10-c0330c3a6018",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "76404f3a-145f-4bc5-b6f6-dbc9bcaa078b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentSrc Result not null -> Get incidentSrc Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/2cd5f1bb-66ea-4139-9faf-d0f4d3d15861",
+            "sourceStep": "\/api\/3\/workflow_steps\/5b66630b-131a-4fc6-8387-4a0f63703260",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "58df4e55-fd2a-4d27-a36d-08b9222f2610"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentSrc Result not null -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/5b66630b-131a-4fc6-8387-4a0f63703260",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "74f00783-97f1-49d8-905b-949630ce31f4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract incident target regex -> If incidentTarget Result not null",
+            "targetStep": "\/api\/3\/workflow_steps\/81b71aee-a7f2-48c0-be48-dc91dea6c71d",
+            "sourceStep": "\/api\/3\/workflow_steps\/370fba4c-dfde-4f4c-ab78-1e9f38d80720",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a8f63f96-cafd-49a7-95cb-c52f82b92a27"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget Result not null -> Set General Error",
+            "targetStep": "\/api\/3\/workflow_steps\/0d028b2e-a027-4a1c-b8a3-75e357d64016",
+            "sourceStep": "\/api\/3\/workflow_steps\/81b71aee-a7f2-48c0-be48-dc91dea6c71d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "86284b6c-5c40-4587-ad77-96e7946d0090"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If incidentTarget Result not null -> Get incidentTarget Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/b6e94456-222c-483f-9792-8a8d94c7bf1b",
+            "sourceStep": "\/api\/3\/workflow_steps\/81b71aee-a7f2-48c0-be48-dc91dea6c71d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ceb18cf0-d3c5-4fb4-a0e1-9cbfed8c6af3"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "8b4bc661-4b1d-490a-b937-a2c2f5220380",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM"
+    ]
+}
