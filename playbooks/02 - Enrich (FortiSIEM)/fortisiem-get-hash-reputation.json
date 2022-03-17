@@ -1,0 +1,989 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "fortisiem-get-hash-reputation",
+    "aliasName": null,
+    "tag": null,
+    "description": "FortiSIEM get hash reputation on attributes in an event or incident",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1647189901,
+    "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/60943437-2717-4e5c-92e2-aff2e485ecaa",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "fsiem_api_get_hash_reputation",
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "api_body": "{{vars.request.data}}"
+                        }
+                    }
+                },
+                "authentication_methods": [
+                    ""
+                ]
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/df26c7a2-4166-4ca5-91e5-548e24c01b5f",
+            "uuid": "60943437-2717-4e5c-92e2-aff2e485ecaa"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract data",
+            "description": null,
+            "arguments": {
+                "data": "{{vars.input.params['api_body']}}"
+            },
+            "status": null,
+            "top": "40",
+            "left": "360",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "aa7a4b06-7589-4a8d-a5e8-8b4fb6cec3a6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract hash vars",
+            "description": null,
+            "arguments": {
+                "hashIMP": "{{vars.data.hashIMP}}",
+                "hashMD5": "{{vars.data.hashMD5}}",
+                "hashCode": "{{vars.data.hashCode}}",
+                "hashSHA1": "{{vars.data.hashSHA1}}",
+                "hashSHA256": "{{vars.data.hashSHA256}}",
+                "preHashCode": "{{vars.data.preHashCode}}",
+                "incidentDetail": "{{vars.data.incidentDetail}}",
+                "targetHashCode": "{{vars.data.targetHashCode}}",
+                "hxAgentCertHash": "{{vars.data.hxAgentCertHash}}",
+                "parentFileHashCode": "{{vars.data.parentFileHashCode}}"
+            },
+            "status": null,
+            "top": "380",
+            "left": "360",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "45203802-ea9a-40f5-b270-b2d2090ad33e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "If hashCode exists",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hashCode is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/b8272148-63fb-47a0-a507-af3bc2885c6c",
+                        "step_name": "Get HashCode Rep"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "120",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "ca96e053-80c6-451a-be94-584b97dad037"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "General Error Occurred",
+            "description": null,
+            "arguments": {
+                "Error": "Doesn't Exist"
+            },
+            "status": null,
+            "top": "40",
+            "left": "700",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "8c44fe2c-724c-4f2f-83f0-4c3d66ab0764"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get HashCode Rep",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hashCode}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "120",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "b8272148-63fb-47a0-a507-af3bc2885c6c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get preHashCode Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.preHashCode is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/f98e668e-ce17-4b98-823e-5b8ec8c62a1f",
+                        "step_name": "Get preHashCode Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "200",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "78c5b624-3323-419b-82c2-2cb4661caa02"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashIMP Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hashIMP is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/d84dd992-0919-4c31-95ae-4f93fe51d0d5",
+                        "step_name": "Get hashIMP Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "300",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "2c1fcf2b-1249-47dd-b2fb-a159e5820d03"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashMD5 Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hashMD5 is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/c2d6ead6-77fb-4bff-a954-c8c88ed3958d",
+                        "step_name": "Get hashMD5 Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "380",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "ead640d1-0730-4357-b768-3bfed96818a2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashSHA1 Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hashSHA1 is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/2a79ef7c-7360-433a-ad9e-a9999004d316",
+                        "step_name": "Get hashSHA1 Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "460",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "336a89e0-4a57-4c11-8da4-17f887f03d55"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashSHA256 Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hashSHA256 is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/def2b989-64cb-434c-b004-cb32717e0594",
+                        "step_name": "Get hashSHA256 Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "540",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "4ba56376-19f8-41e5-99f6-1215828add2c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get targetHashCode Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.targetHashCode is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/412771ec-acd8-4316-83d1-a58e884be052",
+                        "step_name": "Get targetHashCode Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "620",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "d0471243-745e-4a55-9841-20f912342f6f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hxAgentCertHash",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.hxAgentCertHash is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/78831180-54eb-4069-8395-dc27d1494a72",
+                        "step_name": "Get hxAgentCertHash Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "700",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "7dd797c6-2ad9-473f-9b5c-d039f0716366"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get parentFileHashCode Rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.parentFileHashCode is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/496a6aa3-de6b-4cfd-ada4-f4303ec86962",
+                        "step_name": "Get parentFileHashCode Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "780",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "25c7d5f8-6723-4a8c-bea3-8ae9400b0c97"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get preHashCode Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.preHashCode}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "200",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "f98e668e-ce17-4b98-823e-5b8ec8c62a1f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashIMP Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hashIMP}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "300",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "d84dd992-0919-4c31-95ae-4f93fe51d0d5"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashMD5 Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hashMD5}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "380",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "c2d6ead6-77fb-4bff-a954-c8c88ed3958d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashSHA1 Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hashSHA1}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "460",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "2a79ef7c-7360-433a-ad9e-a9999004d316"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hashSHA256 Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hashSHA256}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "540",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "def2b989-64cb-434c-b004-cb32717e0594"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get targetHashCode Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.targetHashCode}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "620",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "412771ec-acd8-4316-83d1-a58e884be052"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get hxAgentCertHash Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.hxAgentCertHash}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "700",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "78831180-54eb-4069-8395-dc27d1494a72"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get parentFileHashCode Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.parentFileHashCode}}"
+                },
+                "apply_async": false,
+                "ignore_errors": true,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "780",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "496a6aa3-de6b-4cfd-ada4-f4303ec86962"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Summary",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "value": "{% if not vars.steps.Get_HashCode_Rep.summary and not vars.steps.Get_preHashCode_Ref.summary and not vars.steps.Get_hashIMP_Ref.summary and not vars.steps.Get_hashMD5_Ref.summary and not vars.steps.Get_hashSHA1_Ref.summary and not vars.steps.Get_hashSHA256_Ref.summary and not vars.steps.Get_targetHashCode_Ref.summary and not vars.steps.Get_hxAgentCertHash_Ref.summary and not vars.steps.Get_parentFileHashCode_Ref.summary and not vars.steps.Get_incidentDetail_Ref.summary  %} \nThere are no valid hashes found to generate reputation data\n{% else %}\n{% if vars.steps.Get_HashCode_Rep.summary %}\nVirusTotal hashCode {{vars.hashCode}} {{vars.steps.Get_HashCode_Rep.summary}}\n{% endif %}\n{% if vars.steps.Get_preHashCode_Ref.summary %}\nVirusTotal preHashCode {{vars.preHashCode}} {{vars.steps.Get_preHashCode_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_hashIMP_Ref.summary %}\nVirusTotal hashIMP {{vars.hashIMP}} {{vars.steps.Get_hashIMP_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_hashMD5_Ref.summary %}\nVirusTotal hashMD5 {{vars.hashMD5}} {{vars.steps.Get_hashMD5_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_hashSHA1_Ref.summary %}\nVirusTotal SHA1 {{vars.hashSHA1}} {{vars.steps.Get_hashSHA1_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_hashSHA256_Ref.summary %}\nVirusTotal SHA256 {{vars.hashSHA256}} {{vars.steps.Get_hashSHA256_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_targetHashCode_Ref.summary %}\nVirusTotal targetHashCode {{vars.targetHashCode}}{{vars.steps.Get_targetHashCode_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_hxAgentCertHash_Ref.summary %}\nVirusTotal hxAgentCertHash {{vars.hxAgentCertHash}}{{vars.steps.Get_hxAgentCertHash_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_parentFileHashCode_Ref.summary %}\nVirusTotal parentFileHash {{vars.parentFileHashCode}}  {{vars.steps.Get_parentFileHashCode_Ref.summary}}\n{% endif %}\n{% if vars.steps.Get_incidentDetail_Ref.summary %}\nVirusTotal incidentDetail hash:{{vars.incidentDetailHash}} {{vars.steps.Get_incidentDetail_Ref.summary}}\n{% endif %}\n{% endif %}"
+                },
+                "version": "3.1.0",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "500",
+            "left": "2349",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "60992f64-d3df-441f-899b-c40cf9904e14"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Output Vars",
+            "description": null,
+            "arguments": {
+                "Details": "No Details",
+                "Summary": "{{vars.steps.Create_Summary.data['formatted_string']}}"
+            },
+            "status": null,
+            "top": "500",
+            "left": "2760",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "72f2ca6b-e1a0-4ad6-ade3-0cb3a69c224c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get incidentDetail hash rep",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.incidentDetailHash is not defined }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "step_iri": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+                        "condition": "{{ vars.incidentDetailHash == '' }}",
+                        "step_name": "General Error Occurred"
+                    },
+                    {
+                        "option": "Get Hash Rep",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/283d5235-c2c6-4206-92a9-363d4992e854",
+                        "step_name": "Get incidentDetail Ref"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "860",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "528e63e1-88af-4129-ba03-9f1e09ef97b0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get incidentDetail Ref",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hash_input": "{{vars.incidentDetailHash}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/577714a2-0d8f-480f-b812-49a262377449"
+            },
+            "status": null,
+            "top": "860",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "283d5235-c2c6-4206-92a9-363d4992e854"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Regex grab incidentDetail hashCode",
+            "description": null,
+            "arguments": {
+                "incidentDetailHash": "{{vars.incidentDetail| regex_search(\"(?:(?<=hashIMP:)|(?<=hashMD5:)|(?<=hashCode:)|(?<=hashSHA1:)|(?<=hashSHA256:)|(?<=preHashCode:)|(?<=targetHashCode:)|(?<=hxAgentCertHash:)|(?<=parentFileHashCode:))[^,]+\")}}"
+            },
+            "status": null,
+            "top": "880",
+            "left": "840",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "20fdc1bd-0482-4745-b7c8-aaf403d7e8b4"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Extract data",
+            "targetStep": "\/api\/3\/workflow_steps\/aa7a4b06-7589-4a8d-a5e8-8b4fb6cec3a6",
+            "sourceStep": "\/api\/3\/workflow_steps\/60943437-2717-4e5c-92e2-aff2e485ecaa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "18b4849d-eaf6-4b65-b21a-fccee5d55896"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract data -> Extract hash vars",
+            "targetStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "sourceStep": "\/api\/3\/workflow_steps\/aa7a4b06-7589-4a8d-a5e8-8b4fb6cec3a6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4134d23e-e85c-49ae-9c89-b564a04c5d2f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> If hashCode exists",
+            "targetStep": "\/api\/3\/workflow_steps\/ca96e053-80c6-451a-be94-584b97dad037",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "723684ba-319d-41bc-9b11-753932ef5254"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If hashCode exists -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/ca96e053-80c6-451a-be94-584b97dad037",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "18b5400b-ae27-4611-98e2-989153c1efd3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "If hashCode exists -> Get HashCode Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/b8272148-63fb-47a0-a507-af3bc2885c6c",
+            "sourceStep": "\/api\/3\/workflow_steps\/ca96e053-80c6-451a-be94-584b97dad037",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "05bc994b-a88a-49e2-bfeb-d09ae1268f1b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get preHashCode Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/78c5b624-3323-419b-82c2-2cb4661caa02",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d43e9f5f-25e0-4192-af00-8f8cc61da70d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get hashIMP Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/2c1fcf2b-1249-47dd-b2fb-a159e5820d03",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ea1105be-5a91-4355-aa9a-ed8eb8d4f083"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get hashMD5 Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/ead640d1-0730-4357-b768-3bfed96818a2",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d134bce9-5ed4-4b42-b087-7d6fdb57a81e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get hashSHA1 Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/336a89e0-4a57-4c11-8da4-17f887f03d55",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3d1ea977-e4f8-434a-a435-d9b07d1de691"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get hashSHA256 Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/4ba56376-19f8-41e5-99f6-1215828add2c",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0678db96-1340-47c2-ae56-241f000e6752"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get targetHashCode Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/d0471243-745e-4a55-9841-20f912342f6f",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c36a7bc8-8000-436a-89a8-0e745d8b9bc7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get hxAgentCertHash",
+            "targetStep": "\/api\/3\/workflow_steps\/7dd797c6-2ad9-473f-9b5c-d039f0716366",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ae189990-7318-4ff8-a376-64fe9f9e18d0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Get parentFileHashCode Rep",
+            "targetStep": "\/api\/3\/workflow_steps\/25c7d5f8-6723-4a8c-bea3-8ae9400b0c97",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d8e01440-f9e9-4920-91b2-e676dd5d1c50"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get preHashCode Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/78c5b624-3323-419b-82c2-2cb4661caa02",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c4af9df2-a29d-4710-b68a-ee3c9d1e96da"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashIMP Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/2c1fcf2b-1249-47dd-b2fb-a159e5820d03",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "71d99f19-2eee-4370-946e-faba99727c31"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashMD5 Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/ead640d1-0730-4357-b768-3bfed96818a2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f383f563-edfe-4cfd-9210-27a27d8367ed"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA1 Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/336a89e0-4a57-4c11-8da4-17f887f03d55",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4f6f0458-999e-4aaa-ad29-8eea52c41b0b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA256 Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/4ba56376-19f8-41e5-99f6-1215828add2c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "34953862-44a5-4ca0-a05e-f7e09f6211dc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get targetHashCode Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/d0471243-745e-4a55-9841-20f912342f6f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4f63ae8b-cc4f-443f-8e02-e38cfa65542f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hxAgentCertHash -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/7dd797c6-2ad9-473f-9b5c-d039f0716366",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3f789638-a70e-4b0b-93c4-10b17bc8eeee"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get parentFileHashCode Rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/25c7d5f8-6723-4a8c-bea3-8ae9400b0c97",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ae8b9bb2-966a-4602-a2b6-a08883482c49"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get preHashCode Rep -> Get preHashCode Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/f98e668e-ce17-4b98-823e-5b8ec8c62a1f",
+            "sourceStep": "\/api\/3\/workflow_steps\/78c5b624-3323-419b-82c2-2cb4661caa02",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "9efe41ed-baac-4b6a-b6f7-fa0e168b2201"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashIMP Rep -> Get hashIMP Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/d84dd992-0919-4c31-95ae-4f93fe51d0d5",
+            "sourceStep": "\/api\/3\/workflow_steps\/2c1fcf2b-1249-47dd-b2fb-a159e5820d03",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "b70b611b-67b1-4794-af02-17723e81650a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashMD5 Rep -> Get hashMD5 Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/c2d6ead6-77fb-4bff-a954-c8c88ed3958d",
+            "sourceStep": "\/api\/3\/workflow_steps\/ead640d1-0730-4357-b768-3bfed96818a2",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "5fbb4c13-028b-4f2d-a5db-1ac7de00431a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA1 Rep -> Get hashSHA1 Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/2a79ef7c-7360-433a-ad9e-a9999004d316",
+            "sourceStep": "\/api\/3\/workflow_steps\/336a89e0-4a57-4c11-8da4-17f887f03d55",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "cbc4c825-3182-445b-abe5-f499dc2d4556"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA256 Rep -> Get hashSHA256 Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/def2b989-64cb-434c-b004-cb32717e0594",
+            "sourceStep": "\/api\/3\/workflow_steps\/4ba56376-19f8-41e5-99f6-1215828add2c",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "3cad27b6-aa60-434f-89b6-763a22fad81f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get targetHashCode Rep -> Get targetHashCode Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/412771ec-acd8-4316-83d1-a58e884be052",
+            "sourceStep": "\/api\/3\/workflow_steps\/d0471243-745e-4a55-9841-20f912342f6f",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "81d7f7df-fc7d-426a-831e-f9cd80fa3764"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hxAgentCertHash -> Get hxAgentCertHash Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/78831180-54eb-4069-8395-dc27d1494a72",
+            "sourceStep": "\/api\/3\/workflow_steps\/7dd797c6-2ad9-473f-9b5c-d039f0716366",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "42a8d6ba-a36f-4c91-9ecc-eef2be331695"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get parentFileHashCode Rep -> Get parentFileHashCode Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/496a6aa3-de6b-4cfd-ada4-f4303ec86962",
+            "sourceStep": "\/api\/3\/workflow_steps\/25c7d5f8-6723-4a8c-bea3-8ae9400b0c97",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "7f822a53-ac0e-4199-a158-7e05939d3f23"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get HashCode Rep -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/b8272148-63fb-47a0-a507-af3bc2885c6c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9a1c162e-0c3f-44e0-b594-98e137283a7a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get preHashCode Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/f98e668e-ce17-4b98-823e-5b8ec8c62a1f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "85bfa84e-8cd5-4222-a631-cb1162f72148"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashIMP Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/d84dd992-0919-4c31-95ae-4f93fe51d0d5",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2ab4d452-d7eb-4fce-8182-4c62098e639f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashMD5 Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/c2d6ead6-77fb-4bff-a954-c8c88ed3958d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a0dcb85c-643d-4dc0-8cce-29955f9bc308"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA1 Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/2a79ef7c-7360-433a-ad9e-a9999004d316",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "92393d7d-f6c6-47e4-bbc6-67a48ae7794e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hashSHA256 Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/def2b989-64cb-434c-b004-cb32717e0594",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b7e6a483-3466-4479-9333-29b35864c3c3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get targetHashCode Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/412771ec-acd8-4316-83d1-a58e884be052",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ad88a1ec-b870-4413-b036-d77a5062f005"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get hxAgentCertHash Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/78831180-54eb-4069-8395-dc27d1494a72",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cec74030-ff6e-49e1-a719-49bc7b8a445a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get parentFileHashCode Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/496a6aa3-de6b-4cfd-ada4-f4303ec86962",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "50653a27-4cdf-4e02-a216-6704a108e427"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Summary -> Set Output Vars",
+            "targetStep": "\/api\/3\/workflow_steps\/72f2ca6b-e1a0-4ad6-ade3-0cb3a69c224c",
+            "sourceStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e5627051-856e-40f4-ae31-68152bbf60dd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "General Error Occurred -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "91c2a18f-9dc8-401d-917d-f753acb65887"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentDetail hash rep -> General Error Occurred",
+            "targetStep": "\/api\/3\/workflow_steps\/8c44fe2c-724c-4f2f-83f0-4c3d66ab0764",
+            "sourceStep": "\/api\/3\/workflow_steps\/528e63e1-88af-4129-ba03-9f1e09ef97b0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8cc780bb-3f43-4966-9966-e8e49e9b569f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentDetail hash rep -> Get incidentDetail Ref",
+            "targetStep": "\/api\/3\/workflow_steps\/283d5235-c2c6-4206-92a9-363d4992e854",
+            "sourceStep": "\/api\/3\/workflow_steps\/528e63e1-88af-4129-ba03-9f1e09ef97b0",
+            "label": "Get Hash Rep",
+            "isExecuted": false,
+            "uuid": "34b0680a-c27e-4177-96b5-be47585861b2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get incidentDetail Ref -> Create Summary",
+            "targetStep": "\/api\/3\/workflow_steps\/60992f64-d3df-441f-899b-c40cf9904e14",
+            "sourceStep": "\/api\/3\/workflow_steps\/283d5235-c2c6-4206-92a9-363d4992e854",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0bedc7bd-11d0-4d38-a95b-11080be438d8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract hash vars -> Regex grab incidentDetail hashCode",
+            "targetStep": "\/api\/3\/workflow_steps\/20fdc1bd-0482-4745-b7c8-aaf403d7e8b4",
+            "sourceStep": "\/api\/3\/workflow_steps\/45203802-ea9a-40f5-b270-b2d2090ad33e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "fad9797c-7664-4a9b-8829-6d1eceaa7a86"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Regex grab incidentDetail hashCode -> Get incidentDetail hash rep",
+            "targetStep": "\/api\/3\/workflow_steps\/528e63e1-88af-4129-ba03-9f1e09ef97b0",
+            "sourceStep": "\/api\/3\/workflow_steps\/20fdc1bd-0482-4745-b7c8-aaf403d7e8b4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b7a04703-633f-49e4-bb6d-3b7e3a7cc5e9"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "755053ba-f5d5-42ab-95a0-bb2bbf03e878",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "FortiSIEM"
+    ]
+}
