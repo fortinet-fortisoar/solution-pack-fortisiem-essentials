@@ -1,7 +1,7 @@
 {
     "@context": "\/api\/3\/contexts\/WorkflowCollection",
     "@type": "WorkflowCollection",
-    "name": "02 - Enrich (FortiSIEM)",
+    "name": "03 - Enrich (FortiSIEM)",
     "description": null,
     "visible": true,
     "image": null,
