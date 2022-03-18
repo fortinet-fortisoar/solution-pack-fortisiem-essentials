@@ -28,7 +28,7 @@
     "contents": {
         "playbooks": [
             {
-                "name": "02 - Enrich (FortiSIEM)"
+                "name": "03 - Enrich (FortiSIEM)"
             }
         ]
     }
