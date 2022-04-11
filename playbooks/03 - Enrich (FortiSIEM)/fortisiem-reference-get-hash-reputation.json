@@ -13,7 +13,6 @@
         "hash_input"
     ],
     "synchronous": false,
-    "lastModifyDate": 1647189901,
     "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/733a59d7-6093-41a3-bf06-79881c56ec54",

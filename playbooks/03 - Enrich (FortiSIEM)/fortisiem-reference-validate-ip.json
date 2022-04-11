@@ -13,7 +13,6 @@
         "ip"
     ],
     "synchronous": false,
-    "lastModifyDate": 1647189901,
     "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/20dc9068-fc70-4dae-80c2-77764e12304b",

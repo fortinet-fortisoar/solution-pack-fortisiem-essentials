@@ -13,7 +13,6 @@
         "indicator_value"
     ],
     "synchronous": false,
-    "lastModifyDate": 1647189901,
     "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/847ed40b-9ea8-4b8f-a210-fa5d171d27fe",

@@ -11,7 +11,6 @@
     "remoteExecutableFlag": false,
     "parameters": [],
     "synchronous": false,
-    "lastModifyDate": 1647189901,
     "collection": "\/api\/3\/workflow_collections\/6045bdaa-31ed-4fb2-9210-643f2bba23db",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/51afe0d3-5789-43cc-a6ad-65cfffa658d9",

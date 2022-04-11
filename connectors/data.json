@@ -1,0 +1,106 @@
+[
+    {
+        "name": "threatstream",
+        "label": "Anomali ThreatStream",
+        "category": "threat_intelligence",
+        "description": "Anomali ThreatStream offers the most comprehensive Threat Intelligence Platform, allowing organizations to access all intelligence feeds and integrate it seamlessly with internal security and IT systems. This connector facilitates automated operations to to pull threat intelligence from the ThreatStream platform, import observables into ThreatStream from any source, manage threat model entities and investigations, and so on.",
+        "publisher": null,
+        "operation_roles": {
+            "domain_reputation": [],
+            "email_reputation": [],
+            "ip_reputation": [],
+            "file_reputation": [],
+            "url_reputation": [],
+            "whois_domain": [],
+            "whois_ip": [],
+            "filter_language_query": [],
+            "advance_query": [],
+            "submit_observables": [],
+            "get_import_job_status": [],
+            "get_import_jobs": [],
+            "create_incident": [],
+            "fetch_incidents": [],
+            "list_incidents_by_indicator": [],
+            "get_incident": [],
+            "update_incident": [],
+            "delete_incident": [],
+            "get_status": [],
+            "create_threat_bulletin": [],
+            "update_threat_bulletin": [],
+            "list_threat_bulletins": [],
+            "list_threat_model_entity": [],
+            "list_observables_associated_threat_bulletin": [],
+            "submit_urls_files": [],
+            "get_submit_url_status": [],
+            "get_submitted_url_report": [],
+            "intelligence_enrichments": [],
+            "list_incidents": []
+        },
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    },
+    {
+        "name": "fortinet-web-filter-lookup",
+        "label": "Fortinet Web Filter Lookup",
+        "category": "Site Reputation",
+        "description": "Fortinet Web Filter Lookup allows users to check category and classification for any Domain",
+        "publisher": null,
+        "operation_roles": {
+            "url_review": []
+        },
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    },
+    {
+        "name": "mxtoolbox",
+        "label": "MxToolbox",
+        "category": "Information",
+        "description": "MxToolbox offers monitoring solutions and lookup tools. Connector supports automated operations for Lookup, Monitor and Usage",
+        "publisher": null,
+        "operation_roles": {
+            "api_call": []
+        },
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    },
+    {
+        "name": "urlvoid",
+        "label": "URLVoid",
+        "category": "SandBox",
+        "description": "URLVoid Connector",
+        "publisher": null,
+        "operation_roles": {
+            "domain_reputation": []
+        },
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    },
+    {
+        "name": "virustotal",
+        "label": "VirusTotal",
+        "category": "Sandbox",
+        "description": "VirusTotal provides a service that analyzes suspicious files and URLs and facilitates the quick detection of viruses, worms, trojans, and all kinds of malware. This connector facilitates automated operations such as scanning and analyzing suspicious files and URLs and retrieving reports from VirusTotal for files, IP addresses, and domains.",
+        "publisher": null,
+        "operation_roles": {
+            "upload_sample": [],
+            "scan_url": [],
+            "query_ip": [],
+            "query_domain": [],
+            "query_url": [],
+            "file_reputation": [],
+            "analysis_file": [],
+            "custom_endpoint": [],
+            "get_output_schema_ip": [],
+            "get_output_schema_domain": [],
+            "get_output_schema_url": [],
+            "get_output_schema_file": []
+        },
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    }
+]
