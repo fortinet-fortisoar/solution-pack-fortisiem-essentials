@@ -16,7 +16,7 @@
     "prerequisite": null,
     "certified": "false",
     "publisher": "Fortinet",
-    "description": "This solution pack contains the essential contents to make the FortiSIEM integration in FortiSOAR more seamless and comprehensive. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you will also start seeing the installed playbooks in FortiSIEM's native UI (v6.4.0+).",
+    "description": "This solution pack contains the essential contents to make the FortiSIEM integration in FortiSOAR more seamless and comprehensive. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you will also start seeing the installed playbooks in FortiSIEM's native UI (v6.4.0+). Few important integrations used in the solution pack are Anomali ThreatStream, Fortinet Web Filter Lookup, MxToolbox, URLVoid and VirusTotal.",
     "help": "https://github.com/fortinet-fortisoar/solution-pack-fortinet-fortisiem/blob/develop/README.md",
     "category": [
         "Data Enrichment & Threat Intelligence"
