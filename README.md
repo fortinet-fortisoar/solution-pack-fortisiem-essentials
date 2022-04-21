@@ -46,7 +46,7 @@ FortiSIEM provides a number of sample FortiSOAR playbooks that are compatible wi
      **Warning:** After deployment, this Solution Pack installs or upgrades the stated list of connectors.
 
 2. Playbook Collection(s)
-    - 02 - Use Case - Phishing Email Response (5):
+    - 03 - Enrich (FortiSIEM) (9):
 
     |**SN**|**Playbook Name**|**Description**|
     | :- | :- | :- |
