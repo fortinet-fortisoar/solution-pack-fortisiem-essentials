@@ -1,1 +1,3 @@
-# solution-pack-fortisiem-essentials
+# FortiSIEM Essentials Solution Pack
+
+Documentation work is in progress!!
