@@ -1,5 +1,3 @@
-# FortiSIEM Essentials Solution Pack
-
 ## Release Information
 
 - Solution Pack Version: 1.0.0
@@ -11,19 +9,19 @@
 
 ### Introduction
 
-*FortiSIEM Essentials Solution Pack* is designed to provide a set of enrichment playbooks. These playbooks contains the essential contents to make the FortiSIEM integration in FortiSOAR more seamless and comprehensive. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you will also start seeing the installed playbooks in FortiSIEM's native UI (v6.4.0+).
+*FortiSIEM Essentials Solution Pack* is designed to provide a set of enrichment playbooks. These playbooks' contents are essential for seamless and comprehensive FortiSIEM integration in FortiSOAR. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you can see the installed playbooks in FortiSIEM's native UI (v6.4.0 onwards).
 
 ### Usage
 
-FortiSIEM (v6.4.0 onwards) provides the capability to adhoc execute FortiSOAR Playbooks and Connectors from the "INCIDENTS" page for individual incidents, or from the "ANALYTICS" page for individual events.
+FortiSIEM (v6.4.0 onwards) helps execute FortiSOAR Playbooks and Connectors from the **Incidents** page for individual incidents or the **Analytics** page for individual events.
 
-FortiSIEM executes a Playbook, it provides the entire set of incident or raw event data , depending on execution from the "INCIDENTS" or "ANALYTICS" page respectively, as an argument to the Playbook in JSON format. The Playbook operates on that data, execute some actions, and returns the result to FortiSIEM.
+FortiSIEM executes a Playbook that provides the entire set of incident or raw event data, depending on execution from the **Incidents** or **Analytics** page, as an argument to the Playbook in JSON format. The Playbook operates on that data, executes some actions, and returns the result to FortiSIEM.
 
-FortiSIEM provides a number of sample FortiSOAR playbooks that are compatible with FortiSIEM.
+FortiSIEM provides several sample FortiSOAR playbooks that are compatible with FortiSIEM.
 
 - Playbook for getting IP address reputation via VirusTotal
-- Playbook for getting Domain reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, URLVoid, Alienvault OTX
-- Playbook for getting URL reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, URLVoid
+- Playbook for getting Domain reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, URLVoid, and Alienvault OTX
+- Playbook for getting URL reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, and URLVoid
 - Playbook for getting file hash reputation via VirusTotal
 
 ## Prerequisites
