@@ -9,7 +9,7 @@
 
 ### Introduction
 
-*FortiSIEM Essentials Solution Pack* is designed to provide a set of enrichment playbooks. These playbooks' contents are essential for seamless and comprehensive FortiSIEM integration in FortiSOAR. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you can see the installed playbooks in FortiSIEM's native UI (v6.4.0 onwards).
+**FortiSIEM Essentials Solution Pack** is designed to provide a set of enrichment playbooks. These playbooks' contents are essential for seamless and comprehensive FortiSIEM integration in FortiSOAR. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you can see the installed playbooks in FortiSIEM's native UI (v6.4.0 onwards).
 
 ### Usage
 
