@@ -1,61 +1,15 @@
 ## Release Information
 
-- Solution Pack Version: 1.0.0
-- FortiSOAR™ Version Tested on: 7.2.0
-- Authored By: Fortinet
-- Certified: Yes
+- **Version**:  1.0.0 
+- **Certified**: Yes 
+- **Publisher**: Fortinet 
+- **Compatible Version**: FortiSOAR v7.2.0 and above
 
 ## Overview
 
-### Introduction
+**FortiSIEM Essentials** Solution Pack is designed to provide a set of enrichment playbooks. These playbooks' contents are essential for seamless and comprehensive FortiSIEM integration in FortiSOAR. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you can see the installed playbooks in FortiSIEM's native UI (v6.4.0 onwards).
 
-**FortiSIEM Essentials Solution Pack** is designed to provide a set of enrichment playbooks. These playbooks' contents are essential for seamless and comprehensive FortiSIEM integration in FortiSOAR. Through enhancements in the FortiSOAR modules to suit the FortiSIEM ingestion better and by providing you with helpful use case playbooks, the solution pack aims to enhance the utility and experience of the integration. Once installed, you can see the installed playbooks in FortiSIEM's native UI (v6.4.0 onwards).
-
-### Usage
-
-FortiSIEM (v6.4.0 onwards) helps execute FortiSOAR Playbooks and Connectors from the **Incidents** page for individual incidents or the **Analytics** page for individual events.
-
-FortiSIEM executes a Playbook that provides the entire set of incident or raw event data, depending on execution from the **Incidents** or **Analytics** page, as an argument to the Playbook in JSON format. The Playbook operates on that data, executes some actions, and returns the result to FortiSIEM.
-
-FortiSIEM provides several sample FortiSOAR playbooks that are compatible with FortiSIEM.
-
-- Playbook for getting IP address reputation via VirusTotal
-- Playbook for getting Domain reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, URLVoid, and Alienvault OTX
-- Playbook for getting URL reputation via VirusTotal, Anomali, FortiGuard, MX Toolbox, and URLVoid
-- Playbook for getting file hash reputation via VirusTotal
-
-## Prerequisites
-
-|**Solution Pack Name**|**Purpose**|**Doc Link**|
-| :- | :- | :- |
-|SOAR Framework 1.0.0|Require for Incident Response modules|[Click here](https://github.com/fortinet-fortisoar/solution-pack-soar-framework/blob/develop/README.md)|
-
-## Contents
-
-1. Connector(s)
-    |**SN**|**Connector Name**|
-    | :- | :- |
-    |1|Anomali ThreatStream|
-    |2|Fortinet Web Filter Lookup|
-    |3|MxToolbox|
-    |4|URLVoid|
-    |5|VirusTotal|
-
-     **Warning:** After deployment, this Solution Pack installs or upgrades the stated list of connectors.
-
-2. Playbook Collection(s)
-    - 03 - Enrich (FortiSIEM) (9):
-
-    |**SN**|**Playbook Name**|**Description**|
-    | :- | :- | :- |
-    |1|fortisiem-get-domain-reputation|FortiSIEM get domain reputation on attributes in an event or incident|
-    |2|fortisiem-get-hash-reputation|FortiSIEM get hash reputation on attributes in an event or incident|
-    |3|fortisiem-get-ip-reputation|FortiSIEM get IP reputation on attributes in an event or incident|
-    |4|fortisiem-get-url-reputation|FortiSIEM get URL reputation on attributes in an event or incident|
-    |5|fortisiem-reference-get-domain-reputation|Get Reputation of Domain Nested Playbook|
-    |6|fortisiem-reference-get-hash-reputation|Get Hash Reputation Nested Playbook|
-    |7|fortisiem-reference-get-url-rep|Get Reputation of URL nested playbook|
-    |8|fortisiem-reference-validate-ip|FortiSIEM Validate IP address is valid nested playbook|
-    |9|fortisiem-reference-virustotal-reputation|Get virus total reputation nested playbook|
-
-     **Warning:** It is recommended to clone these Playbooks before any customizations to avoid loss of information while upgrading the Solution Pack.
+# Next Steps 
+ 
+| [Installation](https://github.com/fortinet-fortisoar/solution-pack-fortisiem-essentials/blob/develop/docs/setup.md#installation) | [Configuration](https://github.com/fortinet-fortisoar/solution-pack-fortisiem-essentials/blob/develop/docs/setup.md#configuration) | [Usage](https://github.com/fortinet-fortisoar/solution-pack-fortisiem-essentials/blob/develop/docs/usage.md) | [Contents](https://github.com/fortinet-fortisoar/solution-pack-fortisiem-essentials/blob/develop/docs/contents.md) |
+|--------------------------------------------|----------------------------------------------|------------------------|------------------------------|
